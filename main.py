@@ -36,7 +36,7 @@ def main():
     # main
     D_HEIGHT, D_WIDTH = stdscr.getmaxyx()
     CURRENTLY_PLAYLING =  f"{spotify.getCurrentSongData(sp)['name']} - {spotify.getCurrentSongData(sp)['main_artist']}"
-    stdscr.addstr(D_HEIGHT // 2 + (D_HEIGHT // 2) - D_MARGIN, D_WIDTH // 2 - len(CURRENTLY_PLAYLING) // 2, CURRENTLY_PLAYLING)
+    stdscr.addstr(D_HEIGHT - D_MARGIN - 1, D_WIDTH // 2 - len(CURRENTLY_PLAYLING) // 2, CURRENTLY_PLAYLING)
     stdscr.addstr(D_HEIGHT - D_MARGIN, D_WIDTH // 2 - D_MARGIN // 2, CHAR_PAUSE if spotify.getCurrentSongData(sp)['is_playing'] else CHAR_PLAY)
 
 
