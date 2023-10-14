@@ -1,24 +1,37 @@
 from auth import auth
-import climage
-import requests
+import spotify
+import curses
+from curses import wrapper
+import time
 
 sp = auth()
+#spotify.main(sp)
 
-currentSongData = sp.current_playback()["item"]["album"]
+# display config
+D_MARGIN = 2
 
-print()
-print(currentSongData)
+def main():
+    # init
+    curses.noecho()
+    curses.cbreak()
+    stdscr.keypad(True)
+    curses.curs_set(0)
 
-coverImage = (sp.current_playback()["item"]["album"]["images"][1]["url"])
+    # main
+    h, w = stdscr.getmaxyx()
+    CURRENTLY_PLAYLING =  f"{spotify.getCurrentSongData(sp)['name']} - {spotify.getCurrentSongData(sp)['main_artist']}"
+    stdscr.addstr(h // 2 + (h // 2) - D_MARGIN, w // 2 - len(CURRENTLY_PLAYLING) // 2, CURRENTLY_PLAYLING)
+    stdscr.refresh()
 
-def download_file(url):
-    with requests.get(url, stream=True) as r:
-        r.raise_for_status()
-        with open("cover.png", 'wb') as f:
-            for chunk in r.iter_content(chunk_size=8192): 
-                if chunk: 
-                    f.write(chunk)
-                    
-download_file(coverImage)
-coverAsText = climage.convert('cover.png', is_unicode=True, width=20)
-print(coverAsText)
+    time.sleep(3)
+
+    # clean up
+    stdscr.clear()
+    curses.nocbreak()
+    stdscr.keypad(False)
+    curses.echo()
+
+    curses.endwin()
+
+stdscr = curses.initscr()
+main()
