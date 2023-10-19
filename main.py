@@ -3,6 +3,9 @@ from selenium.webdriver.common.by import By
 from time import sleep
 import pyautogui as pag
 
+import modification as m
+import utility
+
 options = webdriver.ChromeOptions()
 
 options.add_argument("user-data-dir=C:\\Users\\USER\\AppData\\Local\\Google\\Chrome\\User Data")
@@ -13,16 +16,9 @@ driver.get("https://open.spotify.com/")
 
 sleep(5)
 
-"""
-`driver.minimize_window()` doesn't let audio play for some reason.
-As an alternative, we just Alt+Tab out of the Chrome instance
-"""
-
-pag.keyDown("alt")
-pag.keyDown("tab")
-pag.keyUp("alt")
-pag.keyUp("tab")
+utility.alt_tab()
 
 while True:
     a = input("Toggle play pause")
-    (driver.find_element(By.XPATH, "//button[@data-testid='control-button-playpause']")).click()
+    m.togglePlayPause(driver)
+    
