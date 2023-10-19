@@ -1,11 +1,11 @@
-from auth import auth
+from auth import authenticateUser
 import spotify
 import curses
 from curses import wrapper
 import time
 from colorama import Fore, Style
 
-sp = auth()
+sp = authenticateUser()
 #spotify.main(sp)
 
 # display config

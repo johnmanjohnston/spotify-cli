@@ -2,8 +2,17 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-def togglePlayPause(driver: webdriver.Chrome):
-    """
-    Presses the play/pause button at the Spotify webpage
-    """
-    driver.find_element(By.XPATH, "//button[@data-testid='control-button-playpause']").click()
+driver: webdriver.Chrome = None # this is set in main.py
+
+def togglePlayPause():
+    pressButtonWithtestidAttribute("control-button-playpause")
+
+def skipBack():
+    pressButtonWithtestidAttribute("control-button-skip-back")
+
+def skipForward():
+    pressButtonWithtestidAttribute("control-button-skip-forward")
+
+# more of like a utility function?
+def pressButtonWithtestidAttribute(testidAttribute: str):
+    driver.find_element(By.XPATH, f"//button[@data-testid='{testidAttribute}']").click()
