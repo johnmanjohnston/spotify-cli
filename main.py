@@ -1,69 +1,28 @@
-from auth import auth
-import spotify
-import curses
-from curses import wrapper
-import time
-from colorama import Fore, Style
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from time import sleep
+import pyautogui as pag
 
-sp = auth()
-#spotify.main(sp)
+options = webdriver.ChromeOptions()
 
-# display config
-D_MARGIN = 2
-D_HEIGHT: int = -1
-D_WIDTH: int = -1
+options.add_argument("user-data-dir=C:\\Users\\USER\\AppData\\Local\\Google\\Chrome\\User Data")
+options.add_argument("profile-directory=Default")
 
-CHAR_PAUSE = "❚❚"
-CHAR_PLAY = "▶"
+driver = webdriver.Chrome(options=options)
+driver.get("https://open.spotify.com/")
 
-def drawMapLabels():
-    h, w = stdscr.getmaxyx()
+sleep(5)
 
-    for i in range(h):
-        stdscr.addstr(i, 0, str(i))
+"""
+`driver.minimize_window()` doesn't let audio play for some reason.
+As an alternative, we just Alt+Tab out of the Chrome instance
+"""
 
-    for i in range(w):
-        if (i % 5 == 0):
-            stdscr.addstr(0, i, str(i))
+pag.keyDown("alt")
+pag.keyDown("tab")
+pag.keyUp("alt")
+pag.keyUp("tab")
 
-def main():
-    # init
-    curses.noecho()
-    curses.cbreak()
-    stdscr.keypad(True)
-    curses.curs_set(0)
-
-    # main
-    D_HEIGHT, D_WIDTH = stdscr.getmaxyx()
-    CURRENTLY_PLAYLING =  f"{spotify.getCurrentSongData(sp)['name']} - {spotify.getCurrentSongData(sp)['main_artist']}"
-    stdscr.addstr(D_HEIGHT - D_MARGIN - 1, D_WIDTH // 2 - len(CURRENTLY_PLAYLING) // 2, CURRENTLY_PLAYLING)
-    stdscr.addstr(D_HEIGHT - D_MARGIN, D_WIDTH // 2 - D_MARGIN // 2, CHAR_PAUSE if spotify.getCurrentSongData(sp)['is_playing'] else CHAR_PLAY)
-
-
-    drawMapLabels()
-
-    stdscr.addstr(".█.", curses.color_pair(3))
-   
-    stdscr.refresh()
-
-    time.sleep(3)
-
-    # clean up
-    stdscr.clear()
-    curses.nocbreak()
-    stdscr.keypad(False)
-    curses.echo()
-
-    curses.endwin()
-
-# initialize curses
-stdscr = curses.initscr()
-
-# initialize colors
-curses.start_color()
-curses.use_default_colors()
-
-for i in range(0, curses.COLORS):
-        curses.init_pair(i + 1, i, -1)
-# initialization complete
-main()
+while True:
+    a = input("Toggle play pause")
+    (driver.find_element(By.XPATH, "//button[@data-testid='control-button-playpause']")).click()
