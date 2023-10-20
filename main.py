@@ -1,15 +1,16 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from time import sleep
-import pyautogui as pag
 
 import modification as m
 import auth
 import read
 import utility
+import frontend
 
+# auth user
 sp = auth.authenticateUser()
 
+# configure webdriver
 options = webdriver.ChromeOptions()
 
 options.add_argument("user-data-dir=C:\\Users\\USER\\AppData\\Local\\Google\\Chrome\\User Data")
@@ -17,19 +18,13 @@ options.add_argument("profile-directory=Default")
 
 driver = webdriver.Chrome(options=options)
 
+# configure the driver for modificiation, and the authentication for reading
 m.driver = driver
 read.auth = sp
 
+# open Spotify, wait, tab out, and initialize the frontend
 driver.get("https://open.spotify.com/")
-
 sleep(5)
 
 utility.alt_tab()
-
-while True:
-    a = input("1 - play/pause; 2 - skip back; 3 - skip forward ")
-    if a == "1": m.togglePlayPause()
-    if a == "2": m.skipBack()
-    if a == "3": m.skipForward()
-
-    read.a()
+frontend.init()
