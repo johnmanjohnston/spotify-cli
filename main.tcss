@@ -1,0 +1,6 @@
+#currently_playing {
+    height: 1fr;
+    content-align: center bottom;
+    width: 100%;
+    padding: 1;
+}
