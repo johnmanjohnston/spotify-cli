@@ -2,6 +2,7 @@ import spotipy
 import selenium.webdriver
 from selenium.webdriver.common.by import By
 from utility import log
+import selenium.types
 
 auth: spotipy.Spotify = None # set in main.py
 driver: selenium.webdriver.Chrome # set in main.py
@@ -10,9 +11,13 @@ def getContentOftestidElement(elType, testIDValue):
     return driver.find_element(By.XPATH, f"//{elType}[@data-testid='{testIDValue}']").text
 
 def currentPlayback():
+    heartedChar = "♥"
+    unheartedChar = "♡"
+
     try:
-        # context-item-info-artist
-        retval = f'{getContentOftestidElement("a", "context-item-link")} - {getContentOftestidElement("a", "context-item-info-artist")}'
+        isHearted = driver.find_element(By.XPATH, f"//button[@data-testid='add-button']").get_attribute("aria-checked").lower() == "true"
+
+        retval = f'{getContentOftestidElement("a", "context-item-link")} - {getContentOftestidElement("a", "context-item-info-artist")} {heartedChar if isHearted else unheartedChar}'
         return retval
     except Exception as e:
         log(str(e))

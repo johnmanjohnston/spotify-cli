@@ -13,6 +13,9 @@ def skipBack():
 def skipForward():
     pressButtonWithtestidAttribute("control-button-skip-forward")
 
+def toggleHeartCurrentSong():
+    driver.find_element(By.XPATH, f"//button[@data-testid='add-button']").click()
+
 # more of like a utility function?
 def pressButtonWithtestidAttribute(testidAttribute: str):
     driver.find_element(By.XPATH, f"//button[@data-testid='{testidAttribute}']").click()

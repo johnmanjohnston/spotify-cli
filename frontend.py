@@ -1,12 +1,15 @@
 import textual.widgets as w
 from textual.app import App, ComposeResult
 import os
+from textual.color import Color
+import textual
+from textual.binding import Binding
 
 import modification as m
 import asyncio
 import read as r
 
-import imgtotext
+from utility import log
 
 PERFORM_ASSERTS = False
 
@@ -19,21 +22,18 @@ def jassert(condition: bool):
 class CurrentlyPlaying(w.Static):
     def compose(self) -> ComposeResult:
         yield w.Label("Currently playing goes here", id="currently_playing")
-
 # Main app
 class SpotifyCLI(App):
     currentlyPlaying = None
 
     CSS_PATH = "main.tcss"
-    
+
     def on_mount(self) -> None:
         jassert(r.auth != None)
         jassert(m.driver != None)
 
         self.currentlyPlaying = self.query_one("#currently_playing", w.Label)
-        self.currentlyPlaying.styles.margin = (int(os.get_terminal_size()[1] - 5), 0, 0, 0)
-
-
+        self.currentlyPlaying.styles.margin = (int(os.get_terminal_size()[1] - 10), 0, 0, 0)
 
         asyncio.create_task(self.tick())
 
@@ -41,9 +41,20 @@ class SpotifyCLI(App):
     def compose(self) -> ComposeResult:
         yield CurrentlyPlaying()
 
+    # callbacks
+    def on_checkbox_changed(self, changed: w.Checkbox.Changed):
+        # `changed` is like a copy of the variable of the checkbox that was just changed.
+        # `changed.control` is like a POINTER to the ACTUAL CHECKBOX that was just changed.
+        pass
+
     def on_key(self, key):
         val = key.key
         
+        # Toggle heart current song
+        if val == "f":
+            m.toggleHeartCurrentSong()
+
+        # Play/pause, skip forward/backward
         if val == "space":
             m.togglePlayPause()
         if val == "left":
