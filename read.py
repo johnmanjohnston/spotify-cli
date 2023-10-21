@@ -10,9 +10,13 @@ def getContentOftestidElement(elType, testIDValue):
     return driver.find_element(By.XPATH, f"//{elType}[@data-testid='{testIDValue}']").text
 
 def currentPlayback():
-    # context-item-info-artist
-    retval = f'{getContentOftestidElement("a", "context-item-link")} - {getContentOftestidElement("a", "context-item-info-artist")}'
-    return retval
+    try:
+        # context-item-info-artist
+        retval = f'{getContentOftestidElement("a", "context-item-link")} - {getContentOftestidElement("a", "context-item-info-artist")}'
+        return retval
+    except Exception as e:
+        log(str(e))
+        return "Loading..."
 
 if __name__ == "__main__":
     import sys

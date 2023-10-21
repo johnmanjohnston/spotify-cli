@@ -1,9 +1,12 @@
 import textual.widgets as w
 from textual.app import App, ComposeResult
+import os
 
 import modification as m
 import asyncio
 import read as r
+
+import imgtotext
 
 PERFORM_ASSERTS = False
 
@@ -22,12 +25,16 @@ class SpotifyCLI(App):
     currentlyPlaying = None
 
     CSS_PATH = "main.tcss"
-
+    
     def on_mount(self) -> None:
         jassert(r.auth != None)
         jassert(m.driver != None)
 
         self.currentlyPlaying = self.query_one("#currently_playing", w.Label)
+        self.currentlyPlaying.styles.margin = (int(os.get_terminal_size()[1] - 5), 0, 0, 0)
+
+
+
         asyncio.create_task(self.tick())
 
 
@@ -44,13 +51,18 @@ class SpotifyCLI(App):
         if val == "right":
             m.skipForward()
 
+        self.updateCurrentPlayback()
+
+
+    # Utiliies
+    def updateCurrentPlayback(self):
+        self.currentlyPlaying.update(str(r.currentPlayback()))
+        self.currentlyPlaying.refresh()
+
     async def tick(self):
         while True:
-            # Update currently playing
-            self.currentlyPlaying.update(str(r.currentPlayback()))
-            self.currentlyPlaying.refresh()
-
-            await asyncio.sleep(.5)
+            self.updateCurrentPlayback()
+            await asyncio.sleep(.1)
 
 
 def init():
