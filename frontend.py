@@ -3,6 +3,7 @@ from textual.app import App, ComposeResult
 import os
 from textual.color import Color
 import textual
+from textual.containers import Container
 from textual.binding import Binding
 
 import modification as m
@@ -25,7 +26,8 @@ class CurrentlyPlaying(w.Static):
 
 class SongProgressBar(w.ProgressBar):
     def compose(self) -> ComposeResult:
-        yield w.ProgressBar(total=100, id="song_progress_bar")
+        yield w.ProgressBar(total=100, show_eta=False, 
+                            show_percentage=False, id="song_progress_bar")
 
 # Main app
 class SpotifyCLI(App):
@@ -39,7 +41,7 @@ class SpotifyCLI(App):
         jassert(m.driver != None)
 
         self.currentlyPlaying = self.query_one("#currently_playing", w.Label)
-        self.currentlyPlaying.styles.margin = (int(os.get_terminal_size()[1] - 10), 0, 0, 0)
+        # self.currentlyPlaying.styles.margin = (int(os.get_terminal_size()[1] - 10), 0, 0, 0)
 
         self.songProgressBar = self.query_one("#song_progress_bar", w.ProgressBar)
 
@@ -47,8 +49,13 @@ class SpotifyCLI(App):
 
 
     def compose(self) -> ComposeResult:
-        yield CurrentlyPlaying()
-        yield SongProgressBar()
+        ##yield CurrentlyPlaying()
+        ##yield SongProgressBar()
+        yield Container(
+            CurrentlyPlaying(),
+            SongProgressBar(),
+            id="current_playback_details_container"
+        )
 
     # callbacks
     def on_checkbox_changed(self, changed: w.Checkbox.Changed):
