@@ -7,7 +7,7 @@ img = PIL.Image.open("cover.png")
 img.load()
 imgData = np.asarray(img, dtype="int32")
 
-RENDER_DIMENSIONS = 8
+RENDER_DIMENSIONS = 16
 IMAGE_DIMENSIONS = img.width # height and width are same
 
 def getCol(r,g,b):

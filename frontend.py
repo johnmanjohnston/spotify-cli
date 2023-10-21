@@ -22,9 +22,15 @@ def jassert(condition: bool):
 class CurrentlyPlaying(w.Static):
     def compose(self) -> ComposeResult:
         yield w.Label("Currently playing goes here", id="currently_playing")
+
+class SongProgressBar(w.ProgressBar):
+    def compose(self) -> ComposeResult:
+        yield w.ProgressBar(total=100, id="song_progress_bar")
+
 # Main app
 class SpotifyCLI(App):
     currentlyPlaying = None
+    songProgressBar = None
 
     CSS_PATH = "main.tcss"
 
@@ -35,11 +41,14 @@ class SpotifyCLI(App):
         self.currentlyPlaying = self.query_one("#currently_playing", w.Label)
         self.currentlyPlaying.styles.margin = (int(os.get_terminal_size()[1] - 10), 0, 0, 0)
 
+        self.songProgressBar = self.query_one("#song_progress_bar", w.ProgressBar)
+
         asyncio.create_task(self.tick())
 
 
     def compose(self) -> ComposeResult:
         yield CurrentlyPlaying()
+        yield SongProgressBar()
 
     # callbacks
     def on_checkbox_changed(self, changed: w.Checkbox.Changed):
@@ -70,9 +79,20 @@ class SpotifyCLI(App):
         self.currentlyPlaying.update(str(r.currentPlayback()))
         self.currentlyPlaying.refresh()
 
+    def updateProgressbar(self):
+        # self.songProgressBar.progress = r.getSongProgress()
+
+        try:
+            self.songProgressBar.progress = r.getSongProgress()
+            self.songProgressBar.refresh()
+        except Exception as e: 
+            log("exception with progress bar: ")
+            log(str(e))
+
     async def tick(self):
         while True:
             self.updateCurrentPlayback()
+            self.updateProgressbar()
             await asyncio.sleep(.1)
 
 

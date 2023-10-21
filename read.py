@@ -23,6 +23,16 @@ def currentPlayback():
         log(str(e))
         return "Loading..."
 
+def getSongProgress() -> float:
+    try:
+        progressBarStyle: str = driver.find_element(By.XPATH, "//div[@data-testid='progress-bar']").get_attribute("style")
+        retval: float = float(progressBarStyle.split(": ")[1].split(".")[0])
+        return retval
+    except Exception as e:
+        log("ERROR")
+        log(e)
+        return 50
+
 if __name__ == "__main__":
     import sys
     import auth as a

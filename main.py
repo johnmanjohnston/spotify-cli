@@ -33,5 +33,5 @@ sleep(3)
 
 utility.alt_tab()
 
-sleep(2)
+sleep(5)
 frontend.init()
