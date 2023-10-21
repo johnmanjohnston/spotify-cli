@@ -25,10 +25,13 @@ except selenium.common.exceptions.SessionNotCreatedException:
 # configure the driver for modificiation, and the authentication for reading
 m.driver = driver
 read.auth = sp
+read.driver = driver
 
 # open Spotify, wait, tab out, and initialize the frontend
 driver.get("https://open.spotify.com/")
-sleep(5)
+sleep(3)
 
 utility.alt_tab()
+
+sleep(5)
 frontend.init()

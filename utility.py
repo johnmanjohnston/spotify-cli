@@ -9,3 +9,8 @@ def alt_tab():
     pag.keyDown("tab")
     pag.keyUp("alt")
     pag.keyUp("tab")
+
+def log(s):
+    with open("log.txt", "a") as f:
+        f.write(s)
+    f.close()

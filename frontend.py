@@ -47,10 +47,7 @@ class SpotifyCLI(App):
     async def tick(self):
         while True:
             # Update currently playing
-            if (r.currentPlayback() == False):
-                self.currentlyPlaying.update(str("No song"))
-            else:
-                self.currentlyPlaying.update(str (r.currentPlayback()[0]) + " - " + str (r.currentPlayback()[1]))
+            self.currentlyPlaying.update(str(r.currentPlayback()))
             self.currentlyPlaying.refresh()
 
             await asyncio.sleep(.5)

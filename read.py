@@ -1,24 +1,18 @@
 import spotipy
+import selenium.webdriver
+from selenium.webdriver.common.by import By
+from utility import log
 
 auth: spotipy.Spotify = None # set in main.py
+driver: selenium.webdriver.Chrome # set in main.py
+
+def getContentOftestidElement(elType, testIDValue):
+    return driver.find_element(By.XPATH, f"//{elType}[@data-testid='{testIDValue}']").text
 
 def currentPlayback():
-    if auth == None: return "AUTH IS NOT CONFIGURED YOU BUFFOON"
-
-    data = auth.current_playback()
-    if data == None: return False
-
-    name = data["item"]["name"]
-    mainArtist = data["item"]["artists"][0]["name"]
-
-    retval = [
-        name,
-        mainArtist,
-        data["is_playing"]
-    ]
-
-    print(retval)
-    return retval # I FORGOT I HAVE TO *RETURN* THIS KILL ME
+    # context-item-info-artist
+    retval = f'{getContentOftestidElement("a", "context-item-link")} - {getContentOftestidElement("a", "context-item-info-artist")}'
+    return retval
 
 if __name__ == "__main__":
     import sys
