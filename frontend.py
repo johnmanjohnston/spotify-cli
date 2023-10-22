@@ -22,8 +22,8 @@ left arrow: go to previous song
 right arrow: go to next song
 
 f: toggle heart song
-r: change repeat setting (TO DO)
-s: toggle shuffle (TO DO)
+r: change repeat setting
+s: toggle shuffle
 """
 
 # Adjust tick speed and slow tick speed *IN SECONDS*
@@ -59,9 +59,6 @@ class SpotifyCLI(App):
     CSS_PATH = "main.tcss"
 
     def on_mount(self) -> None:
-        jassert(r.auth != None)
-        jassert(m.driver != None)
-
         self.currentlyPlaying = self.query_one("#currently_playing", w.Label)
         self.playbackConfig = self.query_one("#playback_config", w.Label)
         # self.currentlyPlaying.styles.margin = (int(os.get_terminal_size()[1] - 10), 0, 0, 0)
@@ -92,11 +89,17 @@ class SpotifyCLI(App):
         pass
 
     def on_key(self, key):
-        val = key.key
+        val = str(key.key).lower()
         
         # Toggle heart current song
         if val == "f":
             m.toggleHeartCurrentSong()
+        
+        if val == "r":
+            m.switchRepeat()
+        
+        if val == "s":
+            m.toggleShuffle()
 
         # Play/pause, skip forward/backward
         if val == "space":

@@ -14,3 +14,9 @@ def skipForward():
 
 def toggleHeartCurrentSong():
     sharedelements.getHeartButton().click()
+
+def switchRepeat():
+    sharedelements.getRepeatButton().click()
+
+def toggleShuffle():
+    sharedelements.getShuffleButton().click()
