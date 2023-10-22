@@ -45,7 +45,10 @@ class SpotifyCLI(App):
 
         self.songProgressBar = self.query_one("#song_progress_bar", w.ProgressBar)
 
+        # margin = (terminal width / 2) - (width of progress bar / 2) 
+
         asyncio.create_task(self.tick())
+        asyncio.create_task(self.slowTick())
 
 
     def compose(self) -> ComposeResult:
@@ -96,7 +99,22 @@ class SpotifyCLI(App):
             log("exception with progress bar: ")
             log(str(e))
 
+    def centerProgressBar(self):
+        self.songProgressBar.styles.margin = (0, 0, 0, int((os.get_terminal_size()[0] / 2) - 16 ))
+
+    async def slowTick(self):
+        """
+        called frequently, but not as often as tick()
+        use slowTick() for other not very important tasks
+        """
+        while True:
+            self.centerProgressBar()
+            await asyncio.sleep(5)
+
     async def tick(self):
+        """
+        called very frequently to update the TUI
+        """
         while True:
             self.updateCurrentPlayback()
             self.updateProgressbar()
