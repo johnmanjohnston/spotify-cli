@@ -10,7 +10,31 @@ driver: selenium.webdriver.Chrome # set in main.py
 def getContentOftestidElement(elType, testIDValue):
     return driver.find_element(By.XPATH, f"//{elType}[@data-testid='{testIDValue}']").text
 
+def currentPlaybackConfig():
+    """
+    Returns info about repeat and shuffle
+    """
+    try:
+        isShuffle = driver.find_element(By.XPATH, f"//button[@data-testid='control-button-shuffle']").get_attribute("aria-checked").lower() == "true"
+        repeatState = None
+
+        match driver.find_element(By.XPATH, "//button[@data-testid='control-button-repeat']").get_attribute("aria-checked"):
+            case "mixed":
+                repeatState = "song"
+            case "true":
+                repeatState = "list"
+            case "false":
+                repeatState = "none"
+
+        return f"Shuffle: {isShuffle} - Repeat: {repeatState}"
+    except Exception as e:
+        return "Loading shuffle/repeat status..."
+
 def currentPlayback():
+    """
+    Returns name of song, name of main artist, and wether 
+    the song is hearted or not
+    """
     heartedChar = "♥"
     unheartedChar = "♡"
 
@@ -21,7 +45,7 @@ def currentPlayback():
         return retval
     except Exception as e:
         log(str(e))
-        return "Loading..."
+        return 'driver/auth not assigned (check read.py)' if auth == None or driver == None else 'Loading current playback...'
 
 def getSongProgress() -> float:
     try:

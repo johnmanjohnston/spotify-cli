@@ -1,3 +1,5 @@
+$spotifyGreen: #1ED760;
+
 #currently_playing {
     width: 100%;
     height: 1;
@@ -5,10 +7,22 @@
 
 }
 
+#playback_config {
+    width: 100%;
+    height: 1;
+    content-align-horizontal: center;
+    color: gray;
+}
+
 #song_progress_bar {
 }
 
 #current_playback_details_container {
-    height: 4;
+    height: 5;
     dock: bottom;
+    width: 100%;
+}
+
+Bar > .bar--bar {
+    color: $spotifyGreen;
 }

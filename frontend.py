@@ -11,8 +11,13 @@ import asyncio
 import read as r
 
 from utility import log
+import imgtotext
 
 PERFORM_ASSERTS = False
+
+# Adjust tick speed and slow tick speed *IN SECONDS*
+TICK_SPEED = 0.1
+SLOW_TICK_SPEED = 5
 
 # move this to utility.py later
 def jassert(condition: bool):
@@ -24,14 +29,20 @@ class CurrentlyPlaying(w.Static):
     def compose(self) -> ComposeResult:
         yield w.Label("Currently playing goes here", id="currently_playing")
 
+# contains info about shuffle and repeat
+class PlaybackConfig(w.Static):
+    def compose(self) -> ComposeResult:
+        yield w.Label("Shuffle/repeat status info goes here", id="playback_config")
+
 class SongProgressBar(w.ProgressBar):
     def compose(self) -> ComposeResult:
-        yield w.ProgressBar(total=100, show_eta=False, 
+        yield w.ProgressBar(total=100, show_eta=False,
                             show_percentage=False, id="song_progress_bar")
 
 # Main app
 class SpotifyCLI(App):
     currentlyPlaying = None
+    playbackConfig = None
     songProgressBar = None
 
     CSS_PATH = "main.tcss"
@@ -41,9 +52,11 @@ class SpotifyCLI(App):
         jassert(m.driver != None)
 
         self.currentlyPlaying = self.query_one("#currently_playing", w.Label)
+        self.playbackConfig = self.query_one("#playback_config", w.Label)
         # self.currentlyPlaying.styles.margin = (int(os.get_terminal_size()[1] - 10), 0, 0, 0)
 
         self.songProgressBar = self.query_one("#song_progress_bar", w.ProgressBar)
+        self.songProgressBar.progress = 50
 
         # margin = (terminal width / 2) - (width of progress bar / 2) 
 
@@ -56,6 +69,7 @@ class SpotifyCLI(App):
         ##yield SongProgressBar()
         yield Container(
             CurrentlyPlaying(),
+            PlaybackConfig(),
             SongProgressBar(),
             id="current_playback_details_container"
         )
@@ -81,13 +95,16 @@ class SpotifyCLI(App):
         if val == "right":
             m.skipForward()
 
-        self.updateCurrentPlayback()
+        self.updateAllPlaybackInfo()
 
 
     # Utiliies
-    def updateCurrentPlayback(self):
+    def updateAllPlaybackInfo(self):
         self.currentlyPlaying.update(str(r.currentPlayback()))
         self.currentlyPlaying.refresh()
+
+        self.playbackConfig.update(str(r.currentPlaybackConfig()))
+        self.playbackConfig.refresh()
 
     def updateProgressbar(self):
         # self.songProgressBar.progress = r.getSongProgress()
@@ -100,25 +117,26 @@ class SpotifyCLI(App):
             log(str(e))
 
     def centerProgressBar(self):
-        self.songProgressBar.styles.margin = (0, 0, 0, int((os.get_terminal_size()[0] / 2) - 16 ))
+        self.songProgressBar.styles.margin = (0, 0, 0, int((os.get_terminal_size()[0] // 2) - 16  ))
+        pass
 
     async def slowTick(self):
         """
-        called frequently, but not as often as tick()
+        called frequently, but not as often as tick();
         use slowTick() for other not very important tasks
         """
         while True:
             self.centerProgressBar()
-            await asyncio.sleep(5)
+            await asyncio.sleep(SLOW_TICK_SPEED)
 
     async def tick(self):
         """
         called very frequently to update the TUI
         """
         while True:
-            self.updateCurrentPlayback()
+            self.updateAllPlaybackInfo()
             self.updateProgressbar()
-            await asyncio.sleep(.1)
+            await asyncio.sleep(TICK_SPEED)
 
 
 def init():
