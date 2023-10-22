@@ -1,24 +1,19 @@
 import spotipy
-import selenium.webdriver
-from selenium.webdriver.common.by import By
 from utility import log
 import selenium.types
+import sharedelements
 
 auth: spotipy.Spotify = None # set in main.py
-driver: selenium.webdriver.Chrome # set in main.py
-
-def getContentOftestidElement(elType, testIDValue):
-    return driver.find_element(By.XPATH, f"//{elType}[@data-testid='{testIDValue}']").text
 
 def currentPlaybackConfig():
     """
     Returns info about repeat and shuffle
     """
     try:
-        isShuffle = driver.find_element(By.XPATH, f"//button[@data-testid='control-button-shuffle']").get_attribute("aria-checked").lower() == "true"
+        isShuffle = sharedelements.getShuffleButton().get_attribute("aria-checked").lower() == "true"
         repeatState = None
 
-        match driver.find_element(By.XPATH, "//button[@data-testid='control-button-repeat']").get_attribute("aria-checked"):
+        match sharedelements.getRepeatButton().get_attribute("aria-checked"):
             case "mixed":
                 repeatState = "song"
             case "true":
@@ -39,17 +34,16 @@ def currentPlayback():
     unheartedChar = "♡"
 
     try:
-        isHearted = driver.find_element(By.XPATH, f"//button[@data-testid='add-button']").get_attribute("aria-checked").lower() == "true"
-
-        retval = f'{getContentOftestidElement("a", "context-item-link")} - {getContentOftestidElement("a", "context-item-info-artist")} {heartedChar if isHearted else unheartedChar}'
+        isHearted = sharedelements.getHeartButton().get_attribute("aria-checked").lower() == "true"
+        retval = f'{sharedelements.getSongNameLink().text} - {sharedelements.getMainArtistLink().text} {heartedChar if isHearted else unheartedChar}'
         return retval
     except Exception as e:
         log(str(e))
-        return 'driver/auth not assigned (check read.py)' if auth == None or driver == None else 'Loading current playback...'
+        return 'driver/auth not assigned (check read.py for auth, and sharedelements.py for driver)' if auth == None else 'Loading current playback...'
 
 def getSongProgress() -> float:
     try:
-        progressBarStyle: str = driver.find_element(By.XPATH, "//div[@data-testid='progress-bar']").get_attribute("style")
+        progressBarStyle: str = sharedelements.getProgressBarDiv().get_attribute("style")
         retval: float = float(progressBarStyle.split(": ")[1].split(".")[0])
         return retval
     except Exception as e:

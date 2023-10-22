@@ -7,6 +7,7 @@ import auth
 import read
 import utility
 import frontend
+import sharedelements
 
 # auth user
 sp = auth.authenticateUser()
@@ -23,9 +24,15 @@ except selenium.common.exceptions.SessionNotCreatedException:
     print("YOU BUFFOON CLOSE OTHER INSTANCES OF CHROME")
 
 # configure the driver for modificiation, and the authentication for reading
-m.driver = driver
 read.auth = sp
-read.driver = driver
+sharedelements.driver = driver
+
+print("Performing assertions...")
+
+assert sharedelements.driver != None
+assert read.auth != None
+
+print("Assertions passed")
 
 # open Spotify, wait, tab out, and initialize the frontend
 driver.get("https://open.spotify.com/")

@@ -15,6 +15,17 @@ import imgtotext
 
 PERFORM_ASSERTS = False
 
+"""
+Key bindings:
+space: toggle play/pause
+left arrow: go to previous song
+right arrow: go to next song
+
+f: toggle heart song
+r: change repeat setting (TO DO)
+s: toggle shuffle (TO DO)
+"""
+
 # Adjust tick speed and slow tick speed *IN SECONDS*
 TICK_SPEED = 0.1
 SLOW_TICK_SPEED = 5
