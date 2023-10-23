@@ -7,7 +7,7 @@ img = PIL.Image.open("cover.png")
 img.load()
 imgData = np.asarray(img, dtype="int32")
 
-RENDER_DIMENSIONS = 16
+RENDER_DIMENSIONS = 8
 IMAGE_DIMENSIONS = img.width # height and width are same
 
 def getCol(r,g,b):
@@ -16,6 +16,21 @@ def getCol(r,g,b):
         return color_code
     else:
         return '\33[97m'
+
+def getRowColorData(row):
+    retval = [
+        [],[],[],[],[],[],[],[],
+    ]
+
+    x = row
+    y = 0 # column
+
+    while y < RENDER_DIMENSIONS:
+        c = imgData[x * (IMAGE_DIMENSIONS // RENDER_DIMENSIONS)][y * (IMAGE_DIMENSIONS // RENDER_DIMENSIONS)]
+        retval[y] = [c[0], c[1], c[2]]
+        y += 1
+
+    return retval
 
 def convert():
     RETVAL = ""
@@ -35,3 +50,4 @@ def convert():
 
 if __name__ == "__main__":
     print(convert())
+    # print(getRowColorData(0))

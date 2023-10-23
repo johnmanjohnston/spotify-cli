@@ -10,7 +10,7 @@ def currentPlaybackConfig():
     Returns info about repeat and shuffle
     """
     try:
-        isShuffle = sharedelements.getShuffleButton().get_attribute("aria-checked").lower() == "true"
+        isShuffle = "on" if sharedelements.getShuffleButton().get_attribute("aria-checked").lower() == "true" else "off"
         repeatState = None
 
         match sharedelements.getRepeatButton().get_attribute("aria-checked"):
@@ -39,7 +39,7 @@ def currentPlayback():
         return retval
     except Exception as e:
         log(str(e))
-        return 'driver/auth not assigned (check read.py for auth, and sharedelements.py for driver)' if auth == None else 'Loading current playback...'
+        return 'driver not assigned. check sharedelements.py' if sharedelements.driver == None else 'Loading current playback...'
 
 def getSongProgress() -> float:
     try:
@@ -48,8 +48,8 @@ def getSongProgress() -> float:
         return retval
     except Exception as e:
         log("ERROR")
-        log(e)
-        return 50
+        log(str(e))
+        return 0
 
 if __name__ == "__main__":
     import sys

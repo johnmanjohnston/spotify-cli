@@ -3,7 +3,7 @@ from textual.app import App, ComposeResult
 import os
 from textual.color import Color
 import textual
-from textual.containers import Container
+from textual.containers import Container, Grid
 from textual.binding import Binding
 
 import modification as m
@@ -45,17 +45,21 @@ class PlaybackConfig(w.Static):
     def compose(self) -> ComposeResult:
         yield w.Label("Shuffle/repeat status info goes here", id="playback_config")
 
-class SongProgressBar(w.ProgressBar):
+class SongProgressBar(w.Static):
     def compose(self) -> ComposeResult:
         yield w.ProgressBar(total=100, show_eta=False,
                             show_percentage=False, id="song_progress_bar")
+
+class CoverRow(w.Label):
+    def compose(self) -> ComposeResult:
+        yield w.Label("#" * 8, classes="cover_row")
 
 # Main app
 class SpotifyCLI(App):
     currentlyPlaying = None
     playbackConfig = None
     songProgressBar = None
-
+    
     CSS_PATH = "main.tcss"
 
     def on_mount(self) -> None:
@@ -65,8 +69,6 @@ class SpotifyCLI(App):
 
         self.songProgressBar = self.query_one("#song_progress_bar", w.ProgressBar)
         self.songProgressBar.progress = 50
-
-        # margin = (terminal width / 2) - (width of progress bar / 2) 
 
         asyncio.create_task(self.tick())
         asyncio.create_task(self.slowTick())
@@ -82,6 +84,17 @@ class SpotifyCLI(App):
             id="current_playback_details_container"
         )
 
+        yield Container(
+            CoverRow(),
+            CoverRow(),
+            CoverRow(),
+            CoverRow(),
+            CoverRow(),
+            CoverRow(),
+            CoverRow(),
+            CoverRow(),
+        )
+
     # callbacks
     def on_checkbox_changed(self, changed: w.Checkbox.Changed):
         # `changed` is like a copy of the variable of the checkbox that was just changed.
@@ -91,6 +104,23 @@ class SpotifyCLI(App):
     def on_key(self, key):
         val = str(key.key).lower()
         
+        i = 0
+        for el in self.query(".cover_row").results(w.Label):
+            rowColorData = imgtotext.getRowColorData(i)
+            rowANSI = ""
+            for j in range(8):
+                r = rowColorData[j][0]
+                g = rowColorData[j][1]
+                b = rowColorData[j][2]
+                char = imgtotext.CHAR
+
+                rowANSI += f"\33[38;2;{r};{g};{b}m" + imgtotext.CHAR
+
+            el.update(rowANSI)
+
+            el.refresh()
+            i += 1
+
         # Toggle heart current song
         if val == "f":
             m.toggleHeartCurrentSong()
