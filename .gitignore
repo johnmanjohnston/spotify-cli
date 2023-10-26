@@ -3,3 +3,5 @@ tokens.py
 __pycache__/
 cover.png
 textual-test.py
+log.txt 
+frontendlog.txt

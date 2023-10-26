@@ -38,7 +38,7 @@ def currentPlayback():
 
     try:
         isHearted = sharedelements.getHeartButton().get_attribute("aria-checked").lower() == "true"
-        retval = f'{sharedelements.getSongNameLink().text} - {", ".join(sharedelements.getAllArtists())} {heartedChar if isHearted else unheartedChar}'
+        retval = f'{sharedelements.getSongNameLink().text} - {sharedelements.getMainArtistLink().text} {heartedChar if isHearted else unheartedChar}'
         return retval
     except Exception as e:
         log(str(e))

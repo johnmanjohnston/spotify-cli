@@ -22,7 +22,18 @@ def getSongNameLink():
 def getMainArtistLink():
     return driver.find_element(By.XPATH, f"//a[@data-testid='context-item-info-artist']")
 
+
 def getAllArtists() -> list[str]:
+    """
+    THIS IMPLEMENTATION DOES NOT WORK PROPERLY,
+    YOU CAN BUG IT BY SEARCHING FOR THE SONG,
+    AND IT SHOWSM MULTIPLE ARTISTS
+
+    USE getMainArtistLink().text TO GET MAIN 
+    ARTIST FOR NOW
+    """
+    
+    return ["this is bugged. read docstring."]
     artists = []
     for artist in driver.find_elements(By.XPATH, f"//a[@data-testid='context-item-info-artist']"):
         artists.append(artist.text)

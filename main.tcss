@@ -33,3 +33,7 @@ Screen {
 Bar > .bar--bar {
     color: $spotifyGreen;
 }
+
+#status_label {
+    color: rgba(130, 130, 130, 0.5);
+}
