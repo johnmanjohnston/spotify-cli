@@ -22,6 +22,13 @@ def getSongNameLink():
 def getMainArtistLink():
     return driver.find_element(By.XPATH, f"//a[@data-testid='context-item-info-artist']")
 
+def getAllArtists() -> list[str]:
+    artists = []
+    for artist in driver.find_elements(By.XPATH, f"//a[@data-testid='context-item-info-artist']"):
+        artists.append(artist.text)
+
+    return artists
+
 def getProgressBarDiv():
     return driver.find_element(By.XPATH, f"//div[@data-testid='progress-bar']")
 

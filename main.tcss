@@ -22,7 +22,7 @@ Screen {
 }
 
 #current_playback_details_container {
-    height: 7;
+    height: 8;
     dock: bottom;
     width: 100%;
     background: rgba(0, 0, 0, 0.3);

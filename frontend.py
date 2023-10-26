@@ -11,7 +11,6 @@ import asyncio
 import read as r
 
 from utility import log
-import imgtotext
 
 PERFORM_ASSERTS = False
 
@@ -50,15 +49,12 @@ class SongProgressBar(w.Static):
         yield w.ProgressBar(total=100, show_eta=False,
                             show_percentage=False, id="song_progress_bar")
 
-class CoverRow(w.Label):
-    def compose(self) -> ComposeResult:
-        yield w.Label("#" * 8, classes="cover_row")
-
 # Main app
 class SpotifyCLI(App):
     currentlyPlaying = None
     playbackConfig = None
     songProgressBar = None
+    statusLabel = None
     
     CSS_PATH = "main.tcss"
 
@@ -70,6 +66,8 @@ class SpotifyCLI(App):
         self.songProgressBar = self.query_one("#song_progress_bar", w.ProgressBar)
         self.songProgressBar.progress = 50
 
+        self.statusLabel = self.query_one("#status_label", w.Label)
+
         asyncio.create_task(self.tick())
         asyncio.create_task(self.slowTick())
 
@@ -78,21 +76,12 @@ class SpotifyCLI(App):
         ##yield CurrentlyPlaying()
         ##yield SongProgressBar()
         yield Container(
+            w.Label("status label", id="status_label"),
+            
             CurrentlyPlaying(),
             PlaybackConfig(),
             SongProgressBar(),
             id="current_playback_details_container"
-        )
-
-        yield Container(
-            CoverRow(),
-            CoverRow(),
-            CoverRow(),
-            CoverRow(),
-            CoverRow(),
-            CoverRow(),
-            CoverRow(),
-            CoverRow(),
         )
 
     # callbacks
@@ -101,34 +90,21 @@ class SpotifyCLI(App):
         # `changed.control` is like a POINTER to the ACTUAL CHECKBOX that was just changed.
         pass
 
-    def on_key(self, key):
+    async def on_key(self, key):
         val = str(key.key).lower()
+        self.statusLabel.update(f"pressed {val}")
         
-        i = 0
-        for el in self.query(".cover_row").results(w.Label):
-            rowColorData = imgtotext.getRowColorData(i)
-            rowANSI = ""
-            for j in range(8):
-                r = rowColorData[j][0]
-                g = rowColorData[j][1]
-                b = rowColorData[j][2]
-                char = imgtotext.CHAR
-
-                rowANSI += f"\33[38;2;{r};{g};{b}m" + imgtotext.CHAR
-
-            el.update(rowANSI)
-
-            el.refresh()
-            i += 1
-
         # Toggle heart current song
         if val == "f":
+            self.statusLabel.update("Toggle hearting current song")
             m.toggleHeartCurrentSong()
         
         if val == "r":
+            self.statusLabel.update("Changing repeat setting")
             m.switchRepeat()
         
         if val == "s":
+            self.statusLabel.update("Changing shuffle")
             m.toggleShuffle()
 
         # Play/pause, skip forward/backward
@@ -139,6 +115,7 @@ class SpotifyCLI(App):
         if val == "right":
             m.skipForward()
 
+        await asyncio.sleep(.05)
         self.updateAllPlaybackInfo()
 
 

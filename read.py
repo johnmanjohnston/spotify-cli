@@ -8,6 +8,9 @@ auth: spotipy.Spotify = None # set in main.py
 def currentPlaybackConfig():
     """
     Returns info about repeat and shuffle
+
+    WARNING: SHUFFLE AND REPEAT BUTTONS CAN SOMETIMES BE DISABLED, 
+    TODO: IMPLEMENT DISABLED CHECKS TO SHUFFLE AND REPEAT BUTTONS
     """
     try:
         isShuffle = "on" if sharedelements.getShuffleButton().get_attribute("aria-checked").lower() == "true" else "off"
@@ -35,7 +38,7 @@ def currentPlayback():
 
     try:
         isHearted = sharedelements.getHeartButton().get_attribute("aria-checked").lower() == "true"
-        retval = f'{sharedelements.getSongNameLink().text} - {sharedelements.getMainArtistLink().text} {heartedChar if isHearted else unheartedChar}'
+        retval = f'{sharedelements.getSongNameLink().text} - {", ".join(sharedelements.getAllArtists())} {heartedChar if isHearted else unheartedChar}'
         return retval
     except Exception as e:
         log(str(e))
@@ -44,7 +47,7 @@ def currentPlayback():
 def getSongProgress() -> float:
     try:
         progressBarStyle: str = sharedelements.getProgressBarDiv().get_attribute("style")
-        retval: float = float(progressBarStyle.split(": ")[1].split(".")[0])
+        retval: float = float(progressBarStyle.split(": ")[1].split("%")[0])
         return retval
     except Exception as e:
         log("ERROR")
