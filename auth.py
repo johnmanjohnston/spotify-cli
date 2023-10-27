@@ -7,7 +7,7 @@ def authenticateUser() -> spotipy.Spotify:
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=CLIENT_ID,
                                                 client_secret=CLIENT_SECRET,
                                                 redirect_uri="https://example.com",
-                                                scope="user-library-read user-read-playback-state user-modify-playback-state"))
+                                                scope="user-library-read user-read-playback-state user-modify-playback-state playlist-read-private playlist-read-collaborative"))
     return sp
 
 if __name__ == "__main__":

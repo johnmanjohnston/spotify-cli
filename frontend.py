@@ -49,12 +49,25 @@ class SongProgressBar(w.Static):
         yield w.ProgressBar(total=100, show_eta=False,
                             show_percentage=False, id="song_progress_bar")
 
+class AddToPlaylist(w.Static):
+    playlists = None
+
+    def compose(self) -> ComposeResult:
+        self.playlists = r.auth.user_playlists(r.auth.me()["id"])["items"]
+
+        yield w.ListView(
+            * [w.ListItem(w.Label(p["name"])) for p in self.playlists],
+            id="add_to_playlist_list_view",
+        )
+
 # Main app
 class SpotifyCLI(App):
     currentlyPlaying = None
     playbackConfig = None
     songProgressBar = None
     statusLabel = None
+
+    addToPlaylistListView = None
     
     CSS_PATH = "main.tcss"
 
@@ -68,13 +81,17 @@ class SpotifyCLI(App):
 
         self.statusLabel = self.query_one("#status_label", w.Label)
 
-        asyncio.create_task(self.tick())
-        asyncio.create_task(self.slowTick())
+        self.addToPlaylistListView = self.query_one("#add_to_playlist_list_view", w.ListView)
+
+        # asyncio.create_task(self.tick())
+        # asyncio.create_task(self.slowTick())
 
 
     def compose(self) -> ComposeResult:
         ##yield CurrentlyPlaying()
         ##yield SongProgressBar()
+        yield AddToPlaylist()
+
         yield Container(
             w.Label("status label", id="status_label"),
             
@@ -94,6 +111,8 @@ class SpotifyCLI(App):
         val = str(key.key).lower()
         self.statusLabel.update(f"pressed {val}")
         
+        self.statusLabel.update(str(self.addToPlaylistListView.index))
+
         # Toggle heart current song
         if val == "f":
             self.statusLabel.update("Toggle hearting current song")
