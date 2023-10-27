@@ -83,8 +83,8 @@ class SpotifyCLI(App):
 
         self.addToPlaylistListView = self.query_one("#add_to_playlist_list_view", w.ListView)
 
-        # asyncio.create_task(self.tick())
-        # asyncio.create_task(self.slowTick())
+        asyncio.create_task(self.tick())
+        asyncio.create_task(self.slowTick())
 
 
     def compose(self) -> ComposeResult:
