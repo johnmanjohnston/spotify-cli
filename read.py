@@ -55,13 +55,15 @@ def getSongProgress() -> float:
         return 0
 
 def testAuth():
-    playlists = auth.user_playlists(auth.me()['id'])
+    """playlists = auth.user_playlists(auth.me()['id'])
     # playlist name: (playlists["items"][i]["name"]) where 'i' is the index
 
     for i in range(len(playlists["items"])):
         print(playlists["items"][i]["name"])
         print(playlists["items"][i]["id"])
-        print()
+        print()"""
+    
+    print(auth.current_playback()["item"]["id"])
 
 if __name__ == "__main__":
     import sys

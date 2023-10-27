@@ -62,6 +62,7 @@ class AddToPlaylist(w.Static):
 
 # Main app
 class SpotifyCLI(App):
+    # elements
     currentlyPlaying = None
     playbackConfig = None
     songProgressBar = None
@@ -69,7 +70,9 @@ class SpotifyCLI(App):
 
     addToPlaylistListView = None
     
+    # other
     CSS_PATH = "main.tcss"
+    playlistsWithUri = {}
 
     def on_mount(self) -> None:
         self.currentlyPlaying = self.query_one("#currently_playing", w.Label)
@@ -82,6 +85,12 @@ class SpotifyCLI(App):
         self.statusLabel = self.query_one("#status_label", w.Label)
 
         self.addToPlaylistListView = self.query_one("#add_to_playlist_list_view", w.ListView)
+
+        assert r.auth != None
+        playlists = r.auth.user_playlists(r.auth.me()["id"])["items"]
+        for p in playlists:
+            self.playlistsWithUri[p["name"]] = p["uri"]
+
 
         asyncio.create_task(self.tick())
         asyncio.create_task(self.slowTick())
@@ -107,12 +116,26 @@ class SpotifyCLI(App):
         # `changed.control` is like a POINTER to the ACTUAL CHECKBOX that was just changed.
         pass
 
+    # https://github.com/Textualize/textual/discussions/1840
+    def on_list_view_selected(self, event: w.ListView.Selected):
+        if event.item.parent.id == self.addToPlaylistListView.id:
+            # self.statusLabel.update(str(event.item.children[0].renderable))
+            self.statusLabel.update(str(self.playlistsWithUri[str(event.item.children[0].renderable)]))
+
+            # Get current playlback with spotipy to get the track ID
+            # then use spotipy again to add that track to playlist
+
+            currentTrackID = r.auth.current_playback()["item"]["id"]
+            playlistID = str(self.playlistsWithUri[str(event.item.children[0].renderable)])
+
+            r.auth.playlist_add_items(playlistID, ["spotify:track:" + currentTrackID])
+
+            self.statusLabel.refresh()
+
     async def on_key(self, key):
         val = str(key.key).lower()
-        self.statusLabel.update(f"pressed {val}")
+        # self.statusLabel.update(f"pressed {val}")
         
-        self.statusLabel.update(str(self.addToPlaylistListView.index))
-
         # Toggle heart current song
         if val == "f":
             self.statusLabel.update("Toggle hearting current song")

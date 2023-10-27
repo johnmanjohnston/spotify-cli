@@ -37,3 +37,7 @@ Bar > .bar--bar {
 #status_label {
     color: rgba(130, 130, 130, 0.5);
 }
+
+#add_to_playlist_list_view {
+    height: 5;
+}
