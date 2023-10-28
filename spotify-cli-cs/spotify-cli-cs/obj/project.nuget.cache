@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "dgSpecHash": "Twk3TgYxfL5Rqm+lYG1uUR+XzpHx5ENF6+YkFXiRoC/OEi9UBC1NciTuy+lHcK/NyxJp4enm8iXgODfwxJj36g==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\USER\\OneDrive\\Desktop\\nerd\\spotify-cli\\spotify-cli-cs\\spotify-cli-cs\\spotify-cli-cs.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\USER\\.nuget\\packages\\embedio\\3.5.2\\embedio.3.5.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\microsoft.win32.systemevents\\7.0.0\\microsoft.win32.systemevents.7.0.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\nstack.core\\1.0.7\\nstack.core.1.0.7.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\selenium.webdriver\\4.14.1\\selenium.webdriver.4.14.1.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\spotifyapi.web\\7.0.0\\spotifyapi.web.7.0.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\spotifyapi.web.auth\\7.0.0\\spotifyapi.web.auth.7.0.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\system.codedom\\7.0.0\\system.codedom.7.0.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\system.drawing.common\\7.0.0\\system.drawing.common.7.0.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\system.management\\7.0.2\\system.management.7.0.2.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\terminal.gui\\1.14.0\\terminal.gui.1.14.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\unosquare.swan.lite\\3.1.0\\unosquare.swan.lite.3.1.0.nupkg.sha512"
+  ],
+  "logs": []
+}
