@@ -12,7 +12,7 @@ using OpenQA.Selenium;
 // ChromeDriver driver = new();
 // driver.Navigate().GoToUrl("https://example.com");
 
-class Program
+class SpotifyCLI
 {
     // shared
     public static SpotifyClient? spotify;
@@ -21,6 +21,8 @@ class Program
     // other
     private static string SHELL_EXECUTABLE = "cmd.exe";
     private static string PROGRAM_FILES_DIR = "C:/Users/USER/OneDrive/Desktop/nerd/spotify-cli/spotify-cli-cs/spotify-cli-cs";
+
+    public static bool FRONTEND_ONLY = false;
 
     /// <summary>
     /// Runs Python program to generate access token, and writes it
@@ -49,19 +51,32 @@ class Program
 
     private static void Main()
     {
-        // initialize Spotify client
-        WriteAccessToken();
-        spotify = new(GetAccessToken());
+        if (!FRONTEND_ONLY) {
+            // initialize Spotify client
+            WriteAccessToken();
+            spotify = new(GetAccessToken());
 
-        // initialize webdriver
-        ChromeOptions options = new();
-        options.AddArgument("user-data-dir=C:\\Users\\USER\\AppData\\Local\\Google\\Chrome\\User Data");
-        options.AddArgument("profile-directory=Default");
-        driver = new ChromeDriver(options);
+            // initialize webdriver
+            ChromeOptions options = new();
+            options.AddArgument("user-data-dir=C:\\Users\\USER\\AppData\\Local\\Google\\Chrome\\User Data");
+            options.AddArgument("profile-directory=Default");
+            driver = new ChromeDriver(options);
 
-        driver.Navigate().GoToUrl("https://open.spotify.com");
-        Thread.Sleep(5000);
-        driver.FindElement(By.XPath("//button[@data-testid='control-button-playpause']")).Click();
+            // configure other classes
+            SharedElements.driver = driver;
+
+            // initialization is complete; open Spotify
+            driver.Navigate().GoToUrl("https://open.spotify.com");
+            Thread.Sleep(5000);
+        }
+
+        Application.Init();
+        Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black);
+        try {
+            Application.Run(new MyView());
+        } finally {
+            Application.Shutdown();
+        }
     }   
 }
 

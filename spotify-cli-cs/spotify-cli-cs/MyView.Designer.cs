@@ -1,5 +1,10 @@
+using OpenQA.Selenium.DevTools.V116.Page;
+using OpenQA.Selenium.DevTools.V116.SystemInfo;
 using System;
 using Terminal.Gui;
+using System.Collections;
+using System.Threading;
+using OpenQA.Selenium.DevTools.V116.Debugger;
 
 //------------------------------------------------------------------------------
 
@@ -14,42 +19,96 @@ namespace spotify_cli_cs
 {
     public partial class MyView : Terminal.Gui.Window
     {
+        private Terminal.Gui.Label currentlyPlayingLabel;
+        private Terminal.Gui.ProgressBar progressBar;
+        int c = 0;
 
-        private Terminal.Gui.Label label1;
+        private Thread tickThread;
+        private bool running = true;
 
-        private Terminal.Gui.Button button1;
+        private uint TICK_INTERVAL = 100; // in ms
 
         private void InitializeComponent()
         {
-            this.button1 = new Terminal.Gui.Button();
-            this.label1 = new Terminal.Gui.Label();
+            // create elements
+            this.currentlyPlayingLabel = new Terminal.Gui.Label();
+            this.progressBar = new() {
+                X = Pos.Center(), Y = Pos.Percent(90),
+                Width = 30, Height = 1,
+                ProgressBarStyle = ProgressBarStyle.Continuous,
+            }; // use Fraction property to set progress
+
+            // style window
             this.Width = Dim.Fill(0);
             this.Height = Dim.Fill(0);
             this.X = 0;
             this.Y = 0;
+
             this.Modal = false;
             this.Text = "";
             this.Border.BorderStyle = Terminal.Gui.BorderStyle.Single;
             this.Border.Effect3D = false;
             this.Border.DrawMarginFrame = true;
+
             this.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.Title = "Press Ctrl+Q to quit";
-            this.label1.Width = 4;
-            this.label1.Height = 1;
-            this.label1.X = Pos.Center();
-            this.label1.Y = Pos.Center();
-            this.label1.Data = "label1";
-            this.label1.Text = "Hello World";
-            this.label1.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.Add(this.label1);
-            this.button1.Width = 12;
-            this.button1.X = Pos.Center();
-            this.button1.Y = Pos.Center() + 1;
-            this.button1.Data = "button1";
-            this.button1.Text = "Click Me";
-            this.button1.TextAlignment = Terminal.Gui.TextAlignment.Centered;
-            this.button1.IsDefault = false;
-            this.Add(this.button1);
+            this.Title = "spotify-cli (Ctrl + Q to quit)";
+
+            // configure currently playing label
+            this.currentlyPlayingLabel.Width = 4;
+            this.currentlyPlayingLabel.Height = 1;
+            this.currentlyPlayingLabel.X = Pos.Center();
+            this.currentlyPlayingLabel.Y = Pos.Percent(85);
+
+            this.currentlyPlayingLabel.Text = "currently playing label";
+            this.currentlyPlayingLabel.TextAlignment = Terminal.Gui.TextAlignment.Left;
+
+            // add elements
+            this.Add(this.currentlyPlayingLabel);
+            this.Add(progressBar);
+
+            tickThread = new Thread(() =>
+            {
+                while (running)
+                {
+                    Thread.Sleep((int)TICK_INTERVAL);
+                    Application.MainLoop.Invoke(Tick);
+                }
+            });
+
+            tickThread.IsBackground = true;
+            tickThread.Start();
+        }
+
+        private void Tick()
+        {
+            c++;
+            UpdateCurrentlyPlaying();
+            this.progressBar.Fraction = Read.GetNormalizedSongProgress();
+        }
+
+        public override bool OnKeyDown(KeyEvent keyEvent)
+        {
+            string key = keyEvent.Key.ToString().ToLower();
+            switch (key) {
+                case "space":
+                    Modify.TogglePlayPause();
+                    break;
+                case "cursorleft":
+                    Modify.SkipBack();
+                    break;
+                case "cursorright":
+                    Modify.SkipForward();
+                    break;
+                default: break;
+            }
+
+            return base.OnKeyDown(keyEvent);
+        }
+
+        // utility 
+        private void UpdateCurrentlyPlaying()
+        {
+            currentlyPlayingLabel.Text = Read.GetCurrentlyPlaying();
         }
     }
 }

@@ -16,7 +16,6 @@ namespace spotify_cli_cs
         public MyView()
         {
             InitializeComponent();
-            button1.Clicked += () => MessageBox.Query("Hello", "Hello There!", "Ok");
         }
     }
 }
