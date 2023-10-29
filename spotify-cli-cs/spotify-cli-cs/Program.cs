@@ -7,6 +7,7 @@ using SpotifyAPI.Web.Auth;
 using System.IO;
 using System.Threading;
 using OpenQA.Selenium;
+using System.Text;
 
 // Initialize 
 // ChromeDriver driver = new();

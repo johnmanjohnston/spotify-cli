@@ -6,13 +6,24 @@ namespace spotify_cli_cs
     {
         public static string GetCurrentlyPlaying()
         {
+            char HEARTED = '♥';
+            char UNHEARTED = '♡';
+
             try {
-                string retval = $"{SharedElements.GetSongNameLink().Text} - {SharedElements.GetArtistNameLink().Text}";
+                bool isHearted = SharedElements.GetHeartButton().GetAttribute("aria-checked").ToLower() == "true";
+                char resultingHeartedChar = isHearted ? HEARTED : UNHEARTED;
+
+                string retval = $"{SharedElements.GetSongNameLink().Text} - {SharedElements.GetArtistNameLink().Text} - {resultingHeartedChar}";
                 return retval;
             } catch (Exception)
             {
                 return "Loading...";
             }
+        }
+
+        public static string GetPlaybackDetails()
+        {
+            return "TODO";
         }
         
         public static float GetNormalizedSongProgress()

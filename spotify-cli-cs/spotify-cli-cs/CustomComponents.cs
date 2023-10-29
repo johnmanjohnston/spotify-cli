@@ -39,12 +39,12 @@ namespace Terminal.Gui
             // color labels
             filledLabel.ColorScheme = new()
             {
-                Normal = Attribute.Make(Color.Blue, Color.Black),
+                Normal = Attribute.Make(Color.Gray, Color.Black),
             };
 
             unfilledLabel.ColorScheme = new()
             {
-                Normal = Attribute.Make(Color.Green, Color.Black),
+                Normal = Attribute.Make(Color.DarkGray, Color.Black),
             };
         }
 

@@ -40,9 +40,8 @@ namespace spotify_cli_cs
                 X = Pos.Percent(4), Y = Pos.Percent(85) + 1,
                 Text = "playback details label"
             };
-
             progressBar = new CustomProgressBar() {
-                barWidth = 20,
+                barWidth = 28,
             };
 
             // style window
@@ -65,6 +64,11 @@ namespace spotify_cli_cs
             this.currentlyPlayingLabel.Height = 1;
             this.currentlyPlayingLabel.X = Pos.Percent(4);
             this.currentlyPlayingLabel.Y = Pos.Percent(83);
+
+            this.currentlyPlayingLabel.ColorScheme = new()
+            {
+                Normal = Terminal.Gui.Attribute.Make(Color.Gray, Color.Black),
+            };
 
             this.currentlyPlayingLabel.Text = "currently playing label";
             this.currentlyPlayingLabel.TextAlignment = Terminal.Gui.TextAlignment.Centered;
@@ -114,6 +118,9 @@ namespace spotify_cli_cs
                     break;
                 case "cursorright":
                     Modify.SkipForward();
+                    break;
+                case "f":
+                    Modify.ToggleHeart();
                     break;
                 default: break;
             }

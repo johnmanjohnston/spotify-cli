@@ -16,5 +16,10 @@
         {
             SharedElements.GetSkipBackButton().Click();
         }
+
+        public static void ToggleHeart()
+        {
+            SharedElements.GetHeartButton().Click();
+        }
     }   
 }
