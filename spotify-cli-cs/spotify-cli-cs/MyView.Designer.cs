@@ -43,10 +43,6 @@ namespace spotify_cli_cs
 
             progressBar = new CustomProgressBar() {
                 barWidth = 20,
-                X = Pos.Center(),
-                Y = Pos.Center(),
-                Text = "adsf",
-                Fraction = .2f,
             };
 
             // style window
@@ -79,7 +75,7 @@ namespace spotify_cli_cs
             // this.Add(progressBar);
             progressBar.AddToWindow(this);
 
-            progressBar.Fraction = .5f;
+            progressBar.Fraction = .2f;
             progressBar.DisplayProgress();
 
             if (SpotifyCLI.FRONTEND_ONLY == false)

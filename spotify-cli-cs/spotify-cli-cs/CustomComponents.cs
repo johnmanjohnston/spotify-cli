@@ -13,18 +13,24 @@ namespace Terminal.Gui
         private Label filledLabel;
         private Label unfilledLabel;
 
+        public Pos xPos;
+        public Pos yPos;
+
         public CustomProgressBar()
         {
+            this.xPos = Pos.Percent(4);
+            this.yPos = Pos.Percent(90);
+
             // instansiate labels
             unfilledLabel = new Label()
             {
-                X = Pos.Center(),
-                Y = Pos.Center(),
+                X = this.xPos,
+                Y = this.yPos,
                 Text = new String(EMPTY, (int)(barWidth * Fraction)),
             };
             filledLabel = new Label() {
-                X = Pos.Center(),
-                Y = Pos.Center()+1,
+                X = this.xPos,
+                Y = this.yPos,
                 Text = new String(FILLED, (int)(barWidth * this.Fraction)),
                 TextAlignment = TextAlignment.Left,
             };
@@ -49,20 +55,14 @@ namespace Terminal.Gui
         }
         public void DisplayProgress()
         {
-            try
-            {
-                // TODO
-                int fillWidth = (int)(barWidth * this.Fraction);
+            int fillWidth = (int)(barWidth * this.Fraction);
 
-                filledLabel.Text = new String(FILLED, fillWidth);
-                unfilledLabel.Text = new String(EMPTY, (int)barWidth);
+            filledLabel.Text = new String(FILLED, fillWidth);
+            unfilledLabel.Text = new String(EMPTY, (int)barWidth);
 
-                filledLabel.Y = unfilledLabel.Y;
-                filledLabel.Width = fillWidth;
-                unfilledLabel.Width = (int)barWidth;
-
-                filledLabel.X = Pos.Center() - (int)(barWidth / 2);
-            } catch (Exception ex) { }
+            filledLabel.Y = unfilledLabel.Y;
+            filledLabel.Width = fillWidth;
+            unfilledLabel.Width = (int)barWidth;
         }
     }  
 }
