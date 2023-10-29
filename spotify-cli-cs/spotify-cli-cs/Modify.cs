@@ -2,6 +2,11 @@
 {
     static class Modify
     {
+        private static void l(string s)
+        {
+            System.Diagnostics.Debug.WriteLine(s);
+        }
+
         public static void TogglePlayPause()
         {
             SharedElements.GetPlayPauseButton().Click();
@@ -9,6 +14,7 @@
 
         public static void SkipForward()
         {
+            l("skipping frwrd");
             SharedElements.GetSkipForwardButton().Click();
         }
 

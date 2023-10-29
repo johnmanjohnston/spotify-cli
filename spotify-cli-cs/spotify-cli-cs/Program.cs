@@ -49,15 +49,45 @@ class SpotifyCLI
         return retval;
     }
 
-    private static Thread tickThread;
+    private static Thread? tickThread;
     private static bool running = true;
     private static int tickCount = 0;
 
-    private static string ANSI_GRAY = "\u001b[38;2;107;107;107m";
-    private static string ANSI_RESET = "\u001b[0m";
+    private static string splashScreenArt =
+@"
+
+                 _   _  __                  _ _ 
+ ___ _ __   ___ | |_(_)/ _|_   _        ___| (_)
+/ __| '_ \ / _ \| __| | |_| | | |_____ / __| | |
+\__ \ |_) | (_) | |_| |  _| |_| |_____| (__| | |
+|___/ .__/ \___/ \__|_|_|  \__, |      \___|_|_|
+    |_|                    |___/                
+
+";
+
+    private static void DisplaySplashScreen()
+    {
+        int width = Console.WindowWidth;
+        System.Diagnostics.Debug.WriteLine("debug log test");
+
+        for (int i = 0; i < (Console.WindowHeight / 2) - 5; i++)
+        {
+            Console.WriteLine();
+        }
+
+        string[] lines = splashScreenArt.Split('\n');
+        foreach (string line in lines)
+        {
+            int leftPadding = (width - line.Length) / 2;
+            Console.WriteLine(line.PadLeft(leftPadding + line.Length));
+        }
+
+    }
 
     private static void Main()
     {
+        DisplaySplashScreen();
+
         if (!FRONTEND_ONLY) {
             // initialize Spotify client
             WriteAccessToken();
@@ -67,6 +97,11 @@ class SpotifyCLI
             ChromeOptions options = new();
             options.AddArgument("user-data-dir=C:\\Users\\USER\\AppData\\Local\\Google\\Chrome\\User Data");
             options.AddArgument("profile-directory=Default");
+
+            // ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+            // service.HideCommandPromptWindow = true; // hide all logs from the driver
+
+            // driver = new ChromeDriver(service, options);
             driver = new ChromeDriver(options);
 
             // configure other classes
@@ -93,38 +128,45 @@ class SpotifyCLI
         Console.CursorVisible = false;
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        while (!(Console.KeyAvailable))
+        while (true)
         {
+            if (!Console.KeyAvailable) continue;
+            
             var keyData = Console.ReadKey(true);
 
-            if (keyData.Key == ConsoleKey.Spacebar)     { Modify.TogglePlayPause(); }
-            if (keyData.Key == ConsoleKey.RightArrow)   { Modify.SkipForward(); }
-            if (keyData.Key == ConsoleKey.LeftArrow)    { Modify.SkipBack(); }
-            if (keyData.Key == ConsoleKey.F)            { Modify.ToggleHeart(); }
-            if (keyData.Key == ConsoleKey.S)            { Modify.ChangeShuffleMode(); }
-            if (keyData.Key == ConsoleKey.R)            { Modify.ChangeRepeatMode(); }
+            if (keyData.Key == ConsoleKey.Spacebar) { Modify.TogglePlayPause(); }
+            if (keyData.Key == ConsoleKey.RightArrow) { Modify.SkipForward(); }
+            if (keyData.Key == ConsoleKey.LeftArrow) { Modify.SkipBack(); }
+            if (keyData.Key == ConsoleKey.F) { Modify.ToggleHeart(); }
+            if (keyData.Key == ConsoleKey.S) { Modify.ChangeShuffleMode(); }
+            if (keyData.Key == ConsoleKey.R) { Modify.ChangeRepeatMode(); }
         }
 
         return;
     }
 
-    private static string currentPlaybackLabel;
-    private static string playbackDetailsLabel;
+    private static string? currentPlaybackLabel;
+    private static string? playbackDetailsLabel;
 
     private static int KNOWN_WINDOW_HEIGHT;
     private static int KNOWN_WINDOW_WIDTH;
 
+    private static string ANSI_GRAY = "\u001b[38;2;107;107;107m";
+    private static string ANSI_SPOTIFY_GREEN = "\u001b[38;2;30;215;96m";
+    private static string ANSI_DARK_GRAY = "\u001b[38;2;36;36;36m";
+    private static string ANSI_RESET = "\u001b[0m";
+
     private static void ClearRow(int row)
     {
         Console.SetCursorPosition(0, row);
-        Console.Write(new String(' ', Console.BufferWidth));
+        Console.Write(new String(' ', Console.WindowWidth));
     }
 
     private static string GetProgressBarText()
     {
         int barWidth = 20;
-        string loaded = "\u001b[38;2;30;215;96m━\u001b[0m";
-        string pending = "\u001b[38;2;36;36;36m━\u001b[0m";
+        string loaded = $"{ANSI_SPOTIFY_GREEN}━{ANSI_RESET}";
+        string pending = $"{ANSI_DARK_GRAY}━{ANSI_RESET}";
         int charsToLoad = (int)(barWidth * Read.GetNormalizedSongProgress());
 
         string retval = "";
@@ -143,23 +185,23 @@ class SpotifyCLI
 
     private static void RedrawCurrentlyPlaying()
     {
-        ClearRow(Console.BufferHeight - 5);
-        Console.SetCursorPosition(2, Console.BufferHeight - 5);
+        ClearRow(Console.WindowHeight - 5);
+        Console.SetCursorPosition(2, Console.WindowHeight - 5);
         Console.Write(Read.GetCurrentlyPlaying());
         currentPlaybackLabel = Read.GetCurrentlyPlaying();
     }
 
     private static void RedrawPlaybackDetails()
     {
-        ClearRow(Console.BufferHeight - 4);
-        Console.SetCursorPosition(2, Console.BufferHeight - 4);
+        ClearRow(Console.WindowHeight - 4);
+        Console.SetCursorPosition(2, Console.WindowHeight - 4);
         Console.Write(ANSI_GRAY + Read.GetPlaybackDetails() + ANSI_RESET);
         playbackDetailsLabel = Read.GetPlaybackDetails();
     }
 
     private static void RedrawProgressBar()
     {
-        Console.SetCursorPosition(2, Console.BufferHeight - 3);
+        Console.SetCursorPosition(2, Console.WindowHeight - 3);
         Console.Write(GetProgressBarText());
     }
 
@@ -178,13 +220,17 @@ class SpotifyCLI
         {
             RedrawPlaybackDetails();
         }
-
-        if (KNOWN_WINDOW_HEIGHT != Console.BufferHeight || KNOWN_WINDOW_WIDTH != Console.BufferWidth)
+        
+        // if there's a change in the width/height we think it is,
+        // and the actual width/height, then it means the terminal was resized
+        if (KNOWN_WINDOW_HEIGHT != Console.WindowHeight || KNOWN_WINDOW_WIDTH != Console.WindowWidth)
         {
+            // clear terminal, and assign new width and height
             Console.Clear();
-            KNOWN_WINDOW_HEIGHT = Console.BufferHeight;
-            KNOWN_WINDOW_WIDTH = Console.BufferWidth;
+            KNOWN_WINDOW_HEIGHT = Console.WindowHeight;
+            KNOWN_WINDOW_WIDTH = Console.WindowWidth;
 
+            // redraw everything
             RedrawCurrentlyPlaying();
             RedrawPlaybackDetails();
         }

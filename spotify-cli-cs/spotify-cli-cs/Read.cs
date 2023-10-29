@@ -5,6 +5,11 @@ namespace spotify_cli_cs
 {
     static class Read
     {
+        private static void l(string s)
+        {
+            System.Diagnostics.Debug.WriteLine(s);
+        }
+
         public static string GetCurrentlyPlaying()
         {
             char HEARTED = '♥';
@@ -16,8 +21,10 @@ namespace spotify_cli_cs
 
                 string retval = $"{SharedElements.GetSongNameLink().Text} - {SharedElements.GetArtistNameLink().Text} - {resultingHeartedChar}";
                 return retval;
-            } catch (Exception)
+            } catch (Exception e)
             {
+                l("exception for getting cur playing");
+                l(e.Message);
                 return "Loading...";
             }
         }
@@ -47,19 +54,24 @@ namespace spotify_cli_cs
             
             catch (Exception)
             {
+                l("exception to getting palyback details");
                 return "Loading...";
             }
         }
         
         public static float GetNormalizedSongProgress()
         {
+
             try
             {
                 string progressBarStyle = SharedElements.GetProgressBarDiv().GetAttribute("style");
                 var progress = Convert.ToDecimal(progressBarStyle.Split(": ")[1].Split("%")[0]);
                 float retval = (float)progress / 100.0f;
                 return retval;
-            } catch (Exception) { return 0.0f; }
+            } catch (Exception) {
+                l("exception for getting normalized song progress");
+                return 0.0f; 
+            }
         }
     }
 }
