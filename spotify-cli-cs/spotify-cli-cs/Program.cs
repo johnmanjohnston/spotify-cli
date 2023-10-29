@@ -53,6 +53,9 @@ class SpotifyCLI
     private static bool running = true;
     private static int tickCount = 0;
 
+    private static string ANSI_GRAY = "\u001b[38;2;107;107;107m";
+    private static string ANSI_RESET = "\u001b[0m";
+
     private static void Main()
     {
         if (!FRONTEND_ONLY) {
@@ -94,14 +97,19 @@ class SpotifyCLI
         {
             var keyData = Console.ReadKey(true);
 
-            if (keyData.Key == ConsoleKey.Spacebar) { Modify.TogglePlayPause(); }
+            if (keyData.Key == ConsoleKey.Spacebar)     { Modify.TogglePlayPause(); }
+            if (keyData.Key == ConsoleKey.RightArrow)   { Modify.SkipForward(); }
+            if (keyData.Key == ConsoleKey.LeftArrow)    { Modify.SkipBack(); }
+            if (keyData.Key == ConsoleKey.F)            { Modify.ToggleHeart(); }
+            if (keyData.Key == ConsoleKey.S)            { Modify.ChangeShuffleMode(); }
+            if (keyData.Key == ConsoleKey.R)            { Modify.ChangeRepeatMode(); }
         }
 
         return;
     }
 
     private static string currentPlaybackLabel;
-    private static string progressBarLabel;
+    private static string playbackDetailsLabel;
 
     private static int KNOWN_WINDOW_HEIGHT;
     private static int KNOWN_WINDOW_WIDTH;
@@ -112,7 +120,7 @@ class SpotifyCLI
         Console.Write(new String(' ', Console.BufferWidth));
     }
 
-    private static string GetLoadingBarText()
+    private static string GetProgressBarText()
     {
         int barWidth = 20;
         string loaded = "\u001b[38;2;30;215;96m━\u001b[0m";
@@ -135,24 +143,41 @@ class SpotifyCLI
 
     private static void RedrawCurrentlyPlaying()
     {
-        ClearRow(Console.BufferHeight - 2);
-        Console.SetCursorPosition(2, Console.BufferHeight - 2);
+        ClearRow(Console.BufferHeight - 5);
+        Console.SetCursorPosition(2, Console.BufferHeight - 5);
         Console.Write(Read.GetCurrentlyPlaying());
         currentPlaybackLabel = Read.GetCurrentlyPlaying();
+    }
+
+    private static void RedrawPlaybackDetails()
+    {
+        ClearRow(Console.BufferHeight - 4);
+        Console.SetCursorPosition(2, Console.BufferHeight - 4);
+        Console.Write(ANSI_GRAY + Read.GetPlaybackDetails() + ANSI_RESET);
+        playbackDetailsLabel = Read.GetPlaybackDetails();
+    }
+
+    private static void RedrawProgressBar()
+    {
+        Console.SetCursorPosition(2, Console.BufferHeight - 3);
+        Console.Write(GetProgressBarText());
     }
 
     private static void Tick()
     {
         tickCount++;
 
+        RedrawProgressBar();
+
         if (currentPlaybackLabel != Read.GetCurrentlyPlaying())
         {
             RedrawCurrentlyPlaying();
         }
 
-        // ClearRow(5);
-        Console.SetCursorPosition(5, 5);
-        Console.WriteLine(GetLoadingBarText());
+        if (playbackDetailsLabel != Read.GetPlaybackDetails())
+        {
+            RedrawPlaybackDetails();
+        }
 
         if (KNOWN_WINDOW_HEIGHT != Console.BufferHeight || KNOWN_WINDOW_WIDTH != Console.BufferWidth)
         {
@@ -161,6 +186,7 @@ class SpotifyCLI
             KNOWN_WINDOW_WIDTH = Console.BufferWidth;
 
             RedrawCurrentlyPlaying();
+            RedrawPlaybackDetails();
         }
     }
 }

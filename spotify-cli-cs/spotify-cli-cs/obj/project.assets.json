@@ -53,18 +53,6 @@
           }
         }
       },
-      "NStack.Core/1.0.7": {
-        "type": "package",
-        "dependencies": {
-          "System.ValueTuple": "4.5.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/NStack.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/NStack.dll": {}
-        }
-      },
       "Selenium.WebDriver/4.14.1": {
         "type": "package",
         "dependencies": {
@@ -118,22 +106,6 @@
           }
         }
       },
-      "System.CodeDom/7.0.0": {
-        "type": "package",
-        "compile": {
-          "lib/net6.0/System.CodeDom.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net6.0/System.CodeDom.dll": {
-            "related": ".xml"
-          }
-        },
-        "build": {
-          "buildTransitive/net6.0/_._": {}
-        }
-      },
       "System.Drawing.Common/7.0.0": {
         "type": "package",
         "dependencies": {
@@ -159,31 +131,6 @@
           }
         }
       },
-      "System.Management/7.0.2": {
-        "type": "package",
-        "dependencies": {
-          "System.CodeDom": "7.0.0"
-        },
-        "compile": {
-          "lib/net6.0/System.Management.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net6.0/System.Management.dll": {
-            "related": ".xml"
-          }
-        },
-        "build": {
-          "buildTransitive/net6.0/_._": {}
-        },
-        "runtimeTargets": {
-          "runtimes/win/lib/net6.0/System.Management.dll": {
-            "assetType": "runtime",
-            "rid": "win"
-          }
-        }
-      },
       "System.ValueTuple/4.5.0": {
         "type": "package",
         "compile": {
@@ -191,34 +138,6 @@
         },
         "runtime": {
           "lib/netcoreapp2.0/_._": {}
-        }
-      },
-      "Terminal.Gui/1.14.0": {
-        "type": "package",
-        "dependencies": {
-          "NStack.Core": "1.0.7",
-          "System.Management": "7.0.2"
-        },
-        "compile": {
-          "lib/netstandard2.1/Terminal.Gui.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.1/Terminal.Gui.dll": {
-            "related": ".xml"
-          }
-        },
-        "resource": {
-          "lib/netstandard2.1/fr-FR/Terminal.Gui.resources.dll": {
-            "locale": "fr-FR"
-          },
-          "lib/netstandard2.1/ja-JP/Terminal.Gui.resources.dll": {
-            "locale": "ja-JP"
-          },
-          "lib/netstandard2.1/pt-PT/Terminal.Gui.resources.dll": {
-            "locale": "pt-PT"
-          }
         }
       },
       "Unosquare.Swan.Lite/3.1.0": {
@@ -312,20 +231,6 @@
         "packageIcon.png"
       ]
     },
-    "NStack.Core/1.0.7": {
-      "sha512": "eqvSscta9zPXMOLRDdYf/6FloygLC9ejZlGoLiejn9XZHxVuGYnSoPzb5YBrgyMih/0yfVejreRmJTUQ64sYew==",
-      "type": "package",
-      "path": "nstack.core/1.0.7",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "README.md",
-        "lib/netstandard2.0/NStack.dll",
-        "logo48.png",
-        "nstack.core.1.0.7.nupkg.sha512",
-        "nstack.core.nuspec"
-      ]
-    },
     "Selenium.WebDriver/4.14.1": {
       "sha512": "9gmtnYWDyscnVPdDZ1dMI8SikKLcrsS+GNweZVKMWxcUsagHOdQnX1yAA22KeTWbRubwp5Vw/E6NF/6drzaTbA==",
       "type": "package",
@@ -383,33 +288,6 @@
         "spotifyapi.web.auth.nuspec"
       ]
     },
-    "System.CodeDom/7.0.0": {
-      "sha512": "GLltyqEsE5/3IE+zYRP5sNa1l44qKl9v+bfdMcwg+M9qnQf47wK3H0SUR/T+3N4JEQXF3vV4CSuuo0rsg+nq2A==",
-      "type": "package",
-      "path": "system.codedom/7.0.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Icon.png",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "buildTransitive/net461/System.CodeDom.targets",
-        "buildTransitive/net462/_._",
-        "buildTransitive/net6.0/_._",
-        "buildTransitive/netcoreapp2.0/System.CodeDom.targets",
-        "lib/net462/System.CodeDom.dll",
-        "lib/net462/System.CodeDom.xml",
-        "lib/net6.0/System.CodeDom.dll",
-        "lib/net6.0/System.CodeDom.xml",
-        "lib/net7.0/System.CodeDom.dll",
-        "lib/net7.0/System.CodeDom.xml",
-        "lib/netstandard2.0/System.CodeDom.dll",
-        "lib/netstandard2.0/System.CodeDom.xml",
-        "system.codedom.7.0.0.nupkg.sha512",
-        "system.codedom.nuspec",
-        "useSharedDesignerContext.txt"
-      ]
-    },
     "System.Drawing.Common/7.0.0": {
       "sha512": "KIX+oBU38pxkKPxvLcLfIkOV5Ien8ReN78wro7OF5/erwcmortzeFx+iBswlh2Vz6gVne0khocQudGwaO1Ey6A==",
       "type": "package",
@@ -444,34 +322,6 @@
         "runtimes/win/lib/net7.0/System.Drawing.Common.xml",
         "system.drawing.common.7.0.0.nupkg.sha512",
         "system.drawing.common.nuspec",
-        "useSharedDesignerContext.txt"
-      ]
-    },
-    "System.Management/7.0.2": {
-      "sha512": "/qEUN91mP/MUQmJnM5y5BdT7ZoPuVrtxnFlbJ8a3kBJGhe2wCzBfnPFtK2wTtEEcf3DMGR9J00GZZfg6HRI6yA==",
-      "type": "package",
-      "path": "system.management/7.0.2",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Icon.png",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "buildTransitive/net6.0/_._",
-        "buildTransitive/netcoreapp2.0/System.Management.targets",
-        "lib/net462/_._",
-        "lib/net6.0/System.Management.dll",
-        "lib/net6.0/System.Management.xml",
-        "lib/net7.0/System.Management.dll",
-        "lib/net7.0/System.Management.xml",
-        "lib/netstandard2.0/System.Management.dll",
-        "lib/netstandard2.0/System.Management.xml",
-        "runtimes/win/lib/net6.0/System.Management.dll",
-        "runtimes/win/lib/net6.0/System.Management.xml",
-        "runtimes/win/lib/net7.0/System.Management.dll",
-        "runtimes/win/lib/net7.0/System.Management.xml",
-        "system.management.7.0.2.nupkg.sha512",
-        "system.management.nuspec",
         "useSharedDesignerContext.txt"
       ]
     },
@@ -519,34 +369,6 @@
         "version.txt"
       ]
     },
-    "Terminal.Gui/1.14.0": {
-      "sha512": "l5bxyIrV+b4rEPI3onueOQxfHY6cTSgzxs3QvNo0XxZ+MqdhOd2oyIAm+rVQjsDwq/+flKtJTcq0l4KTWlHyoQ==",
-      "type": "package",
-      "path": "terminal.gui/1.14.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "README.md",
-        "lib/net472/Terminal.Gui.dll",
-        "lib/net472/Terminal.Gui.xml",
-        "lib/net472/fr-FR/Terminal.Gui.resources.dll",
-        "lib/net472/ja-JP/Terminal.Gui.resources.dll",
-        "lib/net472/pt-PT/Terminal.Gui.resources.dll",
-        "lib/net7.0/Terminal.Gui.dll",
-        "lib/net7.0/Terminal.Gui.xml",
-        "lib/net7.0/fr-FR/Terminal.Gui.resources.dll",
-        "lib/net7.0/ja-JP/Terminal.Gui.resources.dll",
-        "lib/net7.0/pt-PT/Terminal.Gui.resources.dll",
-        "lib/netstandard2.1/Terminal.Gui.dll",
-        "lib/netstandard2.1/Terminal.Gui.xml",
-        "lib/netstandard2.1/fr-FR/Terminal.Gui.resources.dll",
-        "lib/netstandard2.1/ja-JP/Terminal.Gui.resources.dll",
-        "lib/netstandard2.1/pt-PT/Terminal.Gui.resources.dll",
-        "logo.png",
-        "terminal.gui.1.14.0.nupkg.sha512",
-        "terminal.gui.nuspec"
-      ]
-    },
     "Unosquare.Swan.Lite/3.1.0": {
       "sha512": "X3s5QE/KMj3WAPFqFve7St+Ds10BB50u8kW8PmKIn7FVkn7yEXe9Yxr2htt1WV85DRqfFR0MN/BUNHkGHtL4OQ==",
       "type": "package",
@@ -567,8 +389,7 @@
     "net6.0": [
       "Selenium.WebDriver >= 4.14.1",
       "SpotifyAPI.Web >= 7.0.0",
-      "SpotifyAPI.Web.Auth >= 7.0.0",
-      "Terminal.Gui >= 1.*"
+      "SpotifyAPI.Web.Auth >= 7.0.0"
     ]
   },
   "packageFolders": {
@@ -621,10 +442,6 @@
           "SpotifyAPI.Web.Auth": {
             "target": "Package",
             "version": "[7.0.0, )"
-          },
-          "Terminal.Gui": {
-            "target": "Package",
-            "version": "[1.*, )"
           }
         },
         "imports": [

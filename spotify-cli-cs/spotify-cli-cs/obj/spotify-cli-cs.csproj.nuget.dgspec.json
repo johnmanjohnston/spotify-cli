@@ -51,10 +51,6 @@
             "SpotifyAPI.Web.Auth": {
               "target": "Package",
               "version": "[7.0.0, )"
-            },
-            "Terminal.Gui": {
-              "target": "Package",
-              "version": "[1.*, )"
             }
           },
           "imports": [
