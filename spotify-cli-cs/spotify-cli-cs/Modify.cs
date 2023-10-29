@@ -21,5 +21,15 @@
         {
             SharedElements.GetHeartButton().Click();
         }
+
+        public static void ChangeRepeatMode()
+        {
+            SharedElements.GetRepeatButton().Click();
+        }
+
+        public static void ChangeShuffleMode()
+        {
+            SharedElements.GetShuffleButton().Click();
+        }
     }   
 }

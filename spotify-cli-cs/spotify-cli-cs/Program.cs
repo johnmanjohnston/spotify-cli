@@ -1,5 +1,4 @@
 ﻿using spotify_cli_cs;
-using Terminal.Gui;
 using OpenQA.Selenium.Chrome;
 using SpotifyAPI.Web;
 using System;
@@ -50,6 +49,10 @@ class SpotifyCLI
         return retval;
     }
 
+    private static Thread tickThread;
+    private static bool running = true;
+    private static int tickCount = 0;
+
     private static void Main()
     {
         if (!FRONTEND_ONLY) {
@@ -71,28 +74,93 @@ class SpotifyCLI
             Thread.Sleep(5000);
         }
 
-        Application.Init();
-        Colors.Base.Normal = Application.Driver.MakeAttribute(Color.DarkGray, Color.Black);
-        try {
-            Application.Run(new MyView());
-        } finally {
-            Application.Shutdown();
+        tickThread = new Thread(() =>
+        {
+            while (running)
+            {
+                Thread.Sleep(100);
+                Tick();
+            }
+        });
+
+        tickThread.IsBackground = true;
+        tickThread.Start();
+
+        Console.Clear();
+        Console.CursorVisible = false;
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+        while (!(Console.KeyAvailable))
+        {
+            var keyData = Console.ReadKey(true);
+
+            if (keyData.Key == ConsoleKey.Spacebar) { Modify.TogglePlayPause(); }
         }
-    }   
+
+        return;
+    }
+
+    private static string currentPlaybackLabel;
+    private static string progressBarLabel;
+
+    private static int KNOWN_WINDOW_HEIGHT;
+    private static int KNOWN_WINDOW_WIDTH;
+
+    private static void ClearRow(int row)
+    {
+        Console.SetCursorPosition(0, row);
+        Console.Write(new String(' ', Console.BufferWidth));
+    }
+
+    private static string GetLoadingBarText()
+    {
+        int barWidth = 20;
+        string loaded = "\u001b[38;2;30;215;96m━\u001b[0m";
+        string pending = "\u001b[38;2;36;36;36m━\u001b[0m";
+        int charsToLoad = (int)(barWidth * Read.GetNormalizedSongProgress());
+
+        string retval = "";
+
+        for (int i = 0; i <= barWidth; i++)
+        {
+            if (i <= charsToLoad)
+            {
+                retval += loaded;
+            }
+            else { retval += pending; }
+        }
+
+        return retval;
+    }
+
+    private static void RedrawCurrentlyPlaying()
+    {
+        ClearRow(Console.BufferHeight - 2);
+        Console.SetCursorPosition(2, Console.BufferHeight - 2);
+        Console.Write(Read.GetCurrentlyPlaying());
+        currentPlaybackLabel = Read.GetCurrentlyPlaying();
+    }
+
+    private static void Tick()
+    {
+        tickCount++;
+
+        if (currentPlaybackLabel != Read.GetCurrentlyPlaying())
+        {
+            RedrawCurrentlyPlaying();
+        }
+
+        // ClearRow(5);
+        Console.SetCursorPosition(5, 5);
+        Console.WriteLine(GetLoadingBarText());
+
+        if (KNOWN_WINDOW_HEIGHT != Console.BufferHeight || KNOWN_WINDOW_WIDTH != Console.BufferWidth)
+        {
+            Console.Clear();
+            KNOWN_WINDOW_HEIGHT = Console.BufferHeight;
+            KNOWN_WINDOW_WIDTH = Console.BufferWidth;
+
+            RedrawCurrentlyPlaying();
+        }
+    }
 }
-
-/*
-
-return;
-
-Application.Init();
-
-try
-{
-    Application.Run(new MyView());
-}
-finally
-{
-    Application.Shutdown();
-}
-*/

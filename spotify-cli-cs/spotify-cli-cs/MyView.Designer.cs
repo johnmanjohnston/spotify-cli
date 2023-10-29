@@ -37,7 +37,7 @@ namespace spotify_cli_cs
             // create elements
             this.currentlyPlayingLabel = new Terminal.Gui.Label();
             this.playbackDetailsLabel = new Terminal.Gui.Label() {
-                X = Pos.Percent(4), Y = Pos.Percent(85) + 1,
+                X = Pos.Percent(4), Y = Pos.Percent(85) ,
                 Text = "playback details label"
             };
             progressBar = new CustomProgressBar() {
@@ -63,7 +63,7 @@ namespace spotify_cli_cs
             this.currentlyPlayingLabel.Width = 15;
             this.currentlyPlayingLabel.Height = 1;
             this.currentlyPlayingLabel.X = Pos.Percent(4);
-            this.currentlyPlayingLabel.Y = Pos.Percent(83);
+            this.currentlyPlayingLabel.Y = Pos.Percent(80);
 
             this.currentlyPlayingLabel.ColorScheme = new()
             {
@@ -101,7 +101,8 @@ namespace spotify_cli_cs
         private void Tick()
         {
             c++;
-            UpdateCurrentlyPlaying();
+            UpdateAllPlaybackInformation();
+
             progressBar.Fraction = Read.GetNormalizedSongProgress();
             progressBar.DisplayProgress();
         }
@@ -122,6 +123,12 @@ namespace spotify_cli_cs
                 case "f":
                     Modify.ToggleHeart();
                     break;
+                case "r":
+                    Modify.ChangeRepeatMode();
+                    break;
+                case "s":
+                    Modify.ChangeShuffleMode();
+                    break;
                 default: break;
             }
 
@@ -129,9 +136,10 @@ namespace spotify_cli_cs
         }
 
         // utility 
-        private void UpdateCurrentlyPlaying()
+        private void UpdateAllPlaybackInformation()
         {
             currentlyPlayingLabel.Text = Read.GetCurrentlyPlaying();
+            playbackDetailsLabel.Text = Read.GetPlaybackDetails();
         }
     }
 }

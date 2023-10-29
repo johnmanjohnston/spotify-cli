@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenQA.Selenium.DevTools.V116.Debugger;
+using System;
 
 namespace spotify_cli_cs 
 {
@@ -23,7 +24,31 @@ namespace spotify_cli_cs
 
         public static string GetPlaybackDetails()
         {
-            return "TODO";
+            try
+            {
+                string shuffleState = SharedElements.GetShuffleButton().GetAttribute("aria-checked").ToLower() == "true" ? "on" : "off";
+                string repeatState = "";
+
+                switch(SharedElements.GetRepeatButton().GetAttribute("aria-checked"))
+                {
+                    case "mixed":
+                        repeatState = "song";
+                        break;
+                    case "true":
+                        repeatState = "list";
+                        break;
+                    case "false":
+                        repeatState = "off";
+                        break;
+                }
+
+                return $"Shuffle: {shuffleState} - Repeat: {repeatState}";
+            } 
+            
+            catch (Exception)
+            {
+                return "Loading...";
+            }
         }
         
         public static float GetNormalizedSongProgress()
