@@ -5,6 +5,8 @@ using Terminal.Gui;
 using System.Collections;
 using System.Threading;
 using OpenQA.Selenium.DevTools.V116.Debugger;
+using System.Reflection;
+using OpenQA.Selenium.DevTools.V116.Runtime;
 
 //------------------------------------------------------------------------------
 
@@ -19,8 +21,10 @@ namespace spotify_cli_cs
 {
     public partial class MyView : Terminal.Gui.Window
     {
+        // private Terminal.Gui.Attribute white = new((int)Color.White);
         private Terminal.Gui.Label currentlyPlayingLabel;
-        private Terminal.Gui.ProgressBar progressBar;
+        private Terminal.Gui.Label playbackDetailsLabel;
+        private Terminal.Gui.CustomProgressBar progressBar;
         int c = 0;
 
         private Thread tickThread;
@@ -32,11 +36,18 @@ namespace spotify_cli_cs
         {
             // create elements
             this.currentlyPlayingLabel = new Terminal.Gui.Label();
-            this.progressBar = new() {
-                X = Pos.Center(), Y = Pos.Percent(90),
-                Width = 30, Height = 1,
-                ProgressBarStyle = ProgressBarStyle.Continuous,
-            }; // use Fraction property to set progress
+            this.playbackDetailsLabel = new Terminal.Gui.Label() {
+                X = Pos.Percent(4), Y = Pos.Percent(85) + 1,
+                Text = "playback details label"
+            };
+
+            progressBar = new CustomProgressBar() {
+                barWidth = 20,
+                X = Pos.Center(),
+                Y = Pos.Center(),
+                Text = "adsf",
+                Fraction = .2f,
+            };
 
             // style window
             this.Width = Dim.Fill(0);
@@ -54,36 +65,45 @@ namespace spotify_cli_cs
             this.Title = "spotify-cli (Ctrl + Q to quit)";
 
             // configure currently playing label
-            this.currentlyPlayingLabel.Width = 4;
+            this.currentlyPlayingLabel.Width = 15;
             this.currentlyPlayingLabel.Height = 1;
-            this.currentlyPlayingLabel.X = Pos.Center();
-            this.currentlyPlayingLabel.Y = Pos.Percent(85);
+            this.currentlyPlayingLabel.X = Pos.Percent(4);
+            this.currentlyPlayingLabel.Y = Pos.Percent(83);
 
             this.currentlyPlayingLabel.Text = "currently playing label";
-            this.currentlyPlayingLabel.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.currentlyPlayingLabel.TextAlignment = Terminal.Gui.TextAlignment.Centered;
 
             // add elements
             this.Add(this.currentlyPlayingLabel);
-            this.Add(progressBar);
+            this.Add(playbackDetailsLabel);
+            // this.Add(progressBar);
+            progressBar.AddToWindow(this);
 
-            tickThread = new Thread(() =>
+            progressBar.Fraction = .5f;
+            progressBar.DisplayProgress();
+
+            if (SpotifyCLI.FRONTEND_ONLY == false)
             {
-                while (running)
+                tickThread = new Thread(() =>
                 {
-                    Thread.Sleep((int)TICK_INTERVAL);
-                    Application.MainLoop.Invoke(Tick);
-                }
-            });
+                    while (running)
+                    {
+                        Thread.Sleep((int)TICK_INTERVAL);
+                        Application.MainLoop.Invoke(Tick);
+                    }
+                });
 
-            tickThread.IsBackground = true;
-            tickThread.Start();
+                tickThread.IsBackground = true;
+                tickThread.Start();
+            }
         }
 
         private void Tick()
         {
             c++;
             UpdateCurrentlyPlaying();
-            this.progressBar.Fraction = Read.GetNormalizedSongProgress();
+            progressBar.Fraction = Read.GetNormalizedSongProgress();
+            progressBar.DisplayProgress();
         }
 
         public override bool OnKeyDown(KeyEvent keyEvent)

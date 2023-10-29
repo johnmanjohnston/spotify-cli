@@ -71,7 +71,7 @@ class SpotifyCLI
         }
 
         Application.Init();
-        Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black);
+        Colors.Base.Normal = Application.Driver.MakeAttribute(Color.DarkGray, Color.Black);
         try {
             Application.Run(new MyView());
         } finally {
