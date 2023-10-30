@@ -70,7 +70,7 @@ class SpotifyCLI
         int width = Console.WindowWidth;
         System.Diagnostics.Debug.WriteLine("debug log test");
 
-        for (int i = 0; i < (Console.WindowHeight / 2) - 5; i++)
+        for (int i = 0; i < (Console.WindowHeight / 2) - 10; i++)
         {
             Console.WriteLine();
         }
@@ -81,19 +81,28 @@ class SpotifyCLI
             int leftPadding = (width - line.Length) / 2;
             Console.WriteLine(line.PadLeft(leftPadding + line.Length));
         }
+    }
 
+    private static void DisplaySplashScreenLoadingMessage(string s)
+    {
+        ClearRow((Console.WindowHeight / 2) + 4);
+        Console.SetCursorPosition((Console.WindowWidth / 2) - s.Length / 2, (Console.WindowHeight / 2) + 4);
+        Console.WriteLine(s + '\n');
     }
 
     private static void Main()
     {
         DisplaySplashScreen();
+        DisplaySplashScreenLoadingMessage("Loading");
 
         if (!FRONTEND_ONLY) {
             // initialize Spotify client
+            DisplaySplashScreenLoadingMessage("Preparing Spotify authentication");
             WriteAccessToken();
             spotify = new(GetAccessToken());
 
             // initialize webdriver
+            DisplaySplashScreenLoadingMessage("Preparing driver");
             ChromeOptions options = new();
             options.AddArgument("user-data-dir=C:\\Users\\USER\\AppData\\Local\\Google\\Chrome\\User Data");
             options.AddArgument("profile-directory=Default");
@@ -104,14 +113,17 @@ class SpotifyCLI
             // driver = new ChromeDriver(service, options);
             driver = new ChromeDriver(options);
 
+            DisplaySplashScreenLoadingMessage("Assigning helper class variables");
             // configure other classes
             SharedElements.driver = driver;
 
+            DisplaySplashScreenLoadingMessage("Opening Spotify");
             // initialization is complete; open Spotify
             driver.Navigate().GoToUrl("https://open.spotify.com");
-            Thread.Sleep(5000);
+            Thread.Sleep(4000);
         }
 
+        DisplaySplashScreenLoadingMessage("Preparing ticking thread");
         tickThread = new Thread(() =>
         {
             while (running)
@@ -141,8 +153,6 @@ class SpotifyCLI
             if (keyData.Key == ConsoleKey.S) { Modify.ChangeShuffleMode(); }
             if (keyData.Key == ConsoleKey.R) { Modify.ChangeRepeatMode(); }
         }
-
-        return;
     }
 
     private static string? currentPlaybackLabel;
@@ -183,6 +193,14 @@ class SpotifyCLI
         return retval;
     }
 
+    private static void RedrawHeartedStatus() 
+    {
+        if (string.IsNullOrEmpty(currentPlaybackLabel)) return;
+
+        Console.SetCursorPosition(currentPlaybackLabel.Length + 3, Console.WindowHeight - 5);
+        Console.Write(Read.GetHeartedStatus());
+    }
+
     private static void RedrawCurrentlyPlaying()
     {
         ClearRow(Console.WindowHeight - 5);
@@ -221,6 +239,8 @@ class SpotifyCLI
             RedrawPlaybackDetails();
         }
         
+        RedrawHeartedStatus(); // redraw hearted status AFTER RedrawCurrentlyPlaying()
+
         // if there's a change in the width/height we think it is,
         // and the actual width/height, then it means the terminal was resized
         if (KNOWN_WINDOW_HEIGHT != Console.WindowHeight || KNOWN_WINDOW_WIDTH != Console.WindowWidth)

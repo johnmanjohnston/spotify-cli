@@ -10,16 +10,23 @@ namespace spotify_cli_cs
             System.Diagnostics.Debug.WriteLine(s);
         }
 
-        public static string GetCurrentlyPlaying()
+        public static char GetHeartedStatus() 
         {
+            if (SpotifyCLI.FRONTEND_ONLY) return '!';
+
             char HEARTED = '♥';
             char UNHEARTED = '♡';
+            bool isHearted = SharedElements.GetHeartButton().GetAttribute("aria-checked").ToLower() == "true";
+
+            return isHearted ? HEARTED : UNHEARTED;
+        }
+
+        public static string GetCurrentlyPlaying()
+        {
+            if (SpotifyCLI.FRONTEND_ONLY) return "Read.GetCurrentlyPlaying() and frontend only is enabeld";
 
             try {
-                bool isHearted = SharedElements.GetHeartButton().GetAttribute("aria-checked").ToLower() == "true";
-                char resultingHeartedChar = isHearted ? HEARTED : UNHEARTED;
-
-                string retval = $"{SharedElements.GetSongNameLink().Text} - {SharedElements.GetArtistNameLink().Text} - {resultingHeartedChar}";
+                string retval = $"{SharedElements.GetSongNameLink().Text} - {SharedElements.GetArtistNameLink().Text}";
                 return retval;
             } catch (Exception e)
             {
@@ -31,6 +38,8 @@ namespace spotify_cli_cs
 
         public static string GetPlaybackDetails()
         {
+            if (SpotifyCLI.FRONTEND_ONLY) return "Read.GetPlaybackDetails() with frontend only is enabled";
+
             try
             {
                 string shuffleState = SharedElements.GetShuffleButton().GetAttribute("aria-checked").ToLower() == "true" ? "on" : "off";
@@ -61,6 +70,7 @@ namespace spotify_cli_cs
         
         public static float GetNormalizedSongProgress()
         {
+            if (SpotifyCLI.FRONTEND_ONLY) return .5f;
 
             try
             {
