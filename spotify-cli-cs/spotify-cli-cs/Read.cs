@@ -16,9 +16,38 @@ namespace spotify_cli_cs
 
             char HEARTED = '♥';
             char UNHEARTED = '♡';
-            bool isHearted = SharedElements.GetHeartButton().GetAttribute("aria-checked").ToLower() == "true";
+         
+            try
+            {
+                bool isHearted = SharedElements.GetHeartButton().GetAttribute("aria-checked").ToLower() == "true";
 
-            return isHearted ? HEARTED : UNHEARTED;
+                return isHearted ? HEARTED : UNHEARTED;
+            }
+
+            catch
+            {
+                return '-';
+            }
+        }
+
+        public static string GetPlaybackTimeInfo()
+        {
+            if (SpotifyCLI.FRONTEND_ONLY) return "read.getPlaybackTimeInfo() called with frontend only enabled";
+
+            try
+            {
+                string pos = SharedElements.GetPlaybackPositionDiv().Text;
+                string duration = SharedElements.GetPlaybackDurationDiv().Text.TrimStart('-');
+
+                string retval = $"{pos} - {duration}";
+
+                return retval;
+            }
+
+            catch
+            {
+                return "Loading...";
+            }
         }
 
         public static string GetCurrentlyPlaying()
