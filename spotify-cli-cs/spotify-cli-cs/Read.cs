@@ -39,7 +39,7 @@ namespace spotify_cli_cs
                 string pos = SharedElements.GetPlaybackPositionDiv().Text;
                 string duration = SharedElements.GetPlaybackDurationDiv().Text.TrimStart('-');
 
-                string retval = $"{pos} - {duration}";
+                string retval = $"{pos} / {duration}";
 
                 return retval;
             }

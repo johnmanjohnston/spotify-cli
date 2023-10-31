@@ -23,4 +23,6 @@ if __name__ == "__main__":
         f.write(accessToken)
     f.close
 
-    # print("Access token written")
+    print("logged in as", a.current_user()["display_name"])
+
+    print("Access token written")

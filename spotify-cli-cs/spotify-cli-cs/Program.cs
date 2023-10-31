@@ -8,6 +8,8 @@ using System.Threading;
 using OpenQA.Selenium;
 using System.Text;
 using OpenQA.Selenium.DevTools.V116.Network;
+using System.ComponentModel.Design;
+using System.Runtime.CompilerServices;
 
 // Initialize 
 // ChromeDriver driver = new();
@@ -23,7 +25,7 @@ class SpotifyCLI
     private static string SHELL_EXECUTABLE = "cmd.exe";
     private static string PROGRAM_FILES_DIR = "C:/Users/USER/OneDrive/Desktop/nerd/spotify-cli/spotify-cli-cs/spotify-cli-cs";
 
-    public static bool FRONTEND_ONLY = true;
+    public static bool FRONTEND_ONLY = false;
 
     /// <summary>
     /// Runs Python program to generate access token, and writes it
@@ -101,6 +103,7 @@ class SpotifyCLI
             DisplaySplashScreenLoadingMessage("Preparing Spotify authentication");
             WriteAccessToken();
             spotify = new(GetAccessToken());
+            Thread.Sleep(2000);
 
             // initialize webdriver
             DisplaySplashScreenLoadingMessage("Preparing driver");
@@ -112,7 +115,7 @@ class SpotifyCLI
             // service.HideCommandPromptWindow = true; // hide all logs from the driver
 
             // driver = new ChromeDriver(service, options);
-            driver = new ChromeDriver(options);
+            driver = new ChromeDriver(options); // InvalidOperationException if Chrome already opened
 
             DisplaySplashScreenLoadingMessage("Assigning helper class variables");
             // configure other classes
@@ -124,6 +127,13 @@ class SpotifyCLI
             Thread.Sleep(4000);
         }
 
+
+        Console.Clear();
+        Console.CursorVisible = false;
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+        Initialize();
+
         DisplaySplashScreenLoadingMessage("Preparing ticking thread");
         tickThread = new Thread(() =>
         {
@@ -133,13 +143,9 @@ class SpotifyCLI
                 Tick();
             }
         });
-
         tickThread.IsBackground = true;
         tickThread.Start();
 
-        Console.Clear();
-        Console.CursorVisible = false;
-        Console.OutputEncoding = System.Text.Encoding.UTF8;
 
         while (true)
         {
@@ -153,6 +159,13 @@ class SpotifyCLI
             else if (keyData.Key == ConsoleKey.F) { Modify.ToggleHeart(); }
             else if (keyData.Key == ConsoleKey.S) { Modify.ChangeShuffleMode(); }
             else if (keyData.Key == ConsoleKey.R) { Modify.ChangeRepeatMode(); }
+
+            else if (keyData.Key == ConsoleKey.Escape) {
+                if (!FRONTEND_ONLY) { driver!.Close(); }
+                
+                Console.Clear();
+                Environment.Exit(0);
+            }
         }
     }
 
@@ -173,6 +186,19 @@ class SpotifyCLI
     // margins
     private static int BOTTOM_BAR_MARGIN_LEFT = 3;
     private static int BOTTOM_BAR_MARGIN_BOTTOM = 3;
+
+    // Spotify data
+    private static List<KeyValuePair<string, string>> userPlaylists = new(); // in the format <uri, name>
+
+    private static void Initialize()
+    {
+        var playlists = spotify!.Playlists.CurrentUsers().Result.Items;
+
+        for (int i = 0; i < playlists!.Count; i++)
+        {
+            userPlaylists.Add(new KeyValuePair<string, string>(playlists[i].Uri, playlists[i].Name));
+        }
+    }
 
     private static void ClearRow(int row)
     {
@@ -217,7 +243,7 @@ class SpotifyCLI
     {
         if (string.IsNullOrEmpty(currentPlaybackLabel)) return;
 
-        Console.SetCursorPosition(currentPlaybackLabel.Length + 3, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
+        Console.SetCursorPosition(currentPlaybackLabel.Length + 4, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(Read.GetHeartedStatus());
     }
 
