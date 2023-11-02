@@ -10,6 +10,8 @@ using System.Text;
 using OpenQA.Selenium.DevTools.V116.Network;
 using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
+using spotify_cli_cs.Components;
+using OpenQA.Selenium.DevTools.V116.Page;
 
 // Initialize 
 // ChromeDriver driver = new();
@@ -139,7 +141,7 @@ class SpotifyCLI
         {
             while (running)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(50);
                 Tick();
             }
         });
@@ -153,16 +155,26 @@ class SpotifyCLI
             
             var keyData = Console.ReadKey(true);
 
-                 if (keyData.Key == ConsoleKey.Spacebar) { Modify.TogglePlayPause(); }
+            if (FOCUSED != null)
+            {
+                // PENDING_COMPONENT_KEY = keyData.Key;
+                FOCUSED.HandleKeyInput(keyData.Key);
+            }
+
+            if (keyData.Key == ConsoleKey.Spacebar) { Modify.TogglePlayPause(); }
             else if (keyData.Key == ConsoleKey.RightArrow) { Modify.SkipForward(); }
             else if (keyData.Key == ConsoleKey.LeftArrow) { Modify.SkipBack(); }
             else if (keyData.Key == ConsoleKey.F) { Modify.ToggleHeart(); }
             else if (keyData.Key == ConsoleKey.S) { Modify.ChangeShuffleMode(); }
             else if (keyData.Key == ConsoleKey.R) { Modify.ChangeRepeatMode(); }
 
-            else if (keyData.Key == ConsoleKey.Escape) {
+            else if (keyData.Key == ConsoleKey.P) { Console.Clear(); }
+            else if (keyData.Key == ConsoleKey.O) { Console.CursorVisible = false; }
+
+            else if (keyData.Key == ConsoleKey.Escape)
+            {
                 if (!FRONTEND_ONLY) { driver!.Close(); }
-                
+
                 Console.Clear();
                 Environment.Exit(0);
             }
@@ -188,23 +200,30 @@ class SpotifyCLI
     private static int BOTTOM_BAR_MARGIN_BOTTOM = 3;
 
     // Spotify data
-    private static List<KeyValuePair<string, string>> userPlaylists = new(); // in the format <uri, name>
+    public static List<KeyValuePair<string, string>> userPlaylists = new(); // in the format <uri, name>
+
+    // component data
+    private static ListView? playlistView;
+    private static TUIBaseComponent? FOCUSED;
 
     private static void Initialize()
     {
-        var playlists = spotify!.Playlists.CurrentUsers().Result.Items;
+        userPlaylists = Read.GetUserPlaylists();
 
-        for (int i = 0; i < playlists!.Count; i++)
-        {
-            userPlaylists.Add(new KeyValuePair<string, string>(playlists[i].Uri, playlists[i].Name));
-        }
+        playlistView = new(Console.WindowWidth / 2, Console.WindowHeight / 2);
+
+        FOCUSED = playlistView; // by default
     }
 
     private static void ClearRow(int row)
     {
-        Console.SetCursorPosition(0, row);
+        int orgX = Console.GetCursorPosition().Left;
+        int orgY = Console.GetCursorPosition().Top;
 
+        Console.SetCursorPosition(0, row);
         Console.Write(new String(' ', Console.WindowWidth));
+
+        Console.SetCursorPosition(orgX, orgY);
     }
 
     private static void DrawLineBorderThing(int row)
@@ -215,16 +234,16 @@ class SpotifyCLI
         Console.Write(ANSI_RESET);
     }
 
+    private static int progressBarWidth = 20;
     private static string GetProgressBarText()
     {
-        int barWidth = 20;
         string loaded = $"{ANSI_SPOTIFY_GREEN}━{ANSI_RESET}";
         string pending = $"{ANSI_DARK_GRAY}━{ANSI_RESET}";
-        int charsToLoad = (int)(barWidth * Read.GetNormalizedSongProgress());
+        int charsToLoad = (int)(progressBarWidth * Read.GetNormalizedSongProgress());
 
         string retval = "";
 
-        for (int i = 0; i <= barWidth; i++)
+        for (int i = 0; i <= progressBarWidth; i++)
         {
             if (i <= charsToLoad)
             {
@@ -267,17 +286,39 @@ class SpotifyCLI
     {
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - 1 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(GetProgressBarText());
+
+        // clean up any text drawn in the wrong spot due to cursor conflicts
+        Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT + progressBarWidth, Console.WindowHeight - 1 - BOTTOM_BAR_MARGIN_BOTTOM);
+        Console.Write(new String(' ', Console.WindowWidth - (BOTTOM_BAR_MARGIN_LEFT + progressBarWidth)));
+
+        if (!string.IsNullOrEmpty(currentPlaybackLabel))
+        {
+            Console.SetCursorPosition(currentPlaybackLabel.Length + 5, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
+            Console.Write(new String(' ', Console.WindowWidth - (currentPlaybackLabel.Length + 5)));
+        }
     }
 
     private static void RedrawPlaybackTimeInfo()
     {
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(ANSI_GRAY + Read.GetPlaybackTimeInfo() + ANSI_RESET);
+
+        // clean up any text drawn in the wrong spot due to cursor conflicts
+        Console.SetCursorPosition(0, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM);
+        Console.Write(new String(' ', BOTTOM_BAR_MARGIN_LEFT));
     }
 
     private static void Tick()
     {
         tickCount++;
+
+        /*
+        if (PENDING_COMPONENT_KEY != null && FOCUSED != null)
+        {
+            FOCUSED.HandleKeyInput((ConsoleKey)PENDING_COMPONENT_KEY);
+            PENDING_COMPONENT_KEY = null;
+        }
+        */
 
         RedrawProgressBar();
         RedrawPlaybackTimeInfo();
@@ -303,11 +344,18 @@ class SpotifyCLI
             KNOWN_WINDOW_HEIGHT = Console.WindowHeight;
             KNOWN_WINDOW_WIDTH = Console.WindowWidth;
 
-            // redraw everything
-            RedrawCurrentlyPlaying();
-            RedrawPlaybackDetails();
-
-            DrawLineBorderThing(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 5);
+            OnResizeTerminal();
         }
+    }
+
+    private static void OnResizeTerminal()
+    {
+        // redraw everything
+        RedrawCurrentlyPlaying();
+        RedrawPlaybackDetails();
+
+        DrawLineBorderThing(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 5);
+
+        playlistView.UpdateLabel();
     }
 }

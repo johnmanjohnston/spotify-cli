@@ -1,4 +1,6 @@
-﻿namespace spotify_cli_cs
+﻿using OpenQA.Selenium;
+
+namespace spotify_cli_cs
 {
     static class Modify
     {
@@ -25,7 +27,11 @@
 
         public static void ToggleHeart()
         {
-            SharedElements.GetHeartButton().Click();
+            try
+            {
+                SharedElements.GetHeartButton().Click();
+            }
+            catch (StaleElementReferenceException) { }
         }
 
         public static void ChangeRepeatMode()

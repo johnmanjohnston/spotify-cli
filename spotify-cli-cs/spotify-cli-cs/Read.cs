@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium.DevTools.V116.Debugger;
+using SpotifyAPI.Web;
 using System;
 
 namespace spotify_cli_cs 
@@ -111,6 +112,41 @@ namespace spotify_cli_cs
                 l("exception for getting normalized song progress");
                 return 0.0f; 
             }
+        }
+
+        // Spotify API data
+        // private static List<KeyValuePair<string, string>> userPlaylists = new(); // in the format <uri, name>
+
+        /// <summary>
+        /// Returns user playlist URI and name in a list of key value pairs for the logged in user.
+        /// If FRONTEND_ONLY is enabled, 5 demo URIs and names in a list of key value pairs are returned.
+        /// </summary>
+        public static List<KeyValuePair<string, string>> GetUserPlaylists() 
+        {
+            List<KeyValuePair<string, string>> retval = new();
+
+            if (!SpotifyCLI.FRONTEND_ONLY)
+            {
+                SpotifyClient spotify = SpotifyCLI.spotify!;
+                var playlists = spotify!.Playlists.CurrentUsers().Result.Items;
+
+                for (int i = 0; i < playlists!.Count; i++)
+                {
+                    retval.Add(new KeyValuePair<string, string>(playlists[i].Uri, playlists[i].Name));
+                }
+            }
+
+            else
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    retval.Add(new KeyValuePair<string, string>($"uri{i}", $"playlist {i}"));
+                }
+            }
+
+            return retval;           
+
+            
         }
     }
 }
