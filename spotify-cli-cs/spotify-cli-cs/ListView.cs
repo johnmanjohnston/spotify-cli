@@ -6,7 +6,7 @@
         private int currentScrollValue; // how far we have scrolled
         private List<KeyValuePair<string, string>> playlistData;
 
-        public ListView(int x, int y) : base(x, y)
+        public ListView(int x = 0, int y = 0) : base(x, y)
         {
             this.playlistData = SpotifyCLI.userPlaylists;
         }
@@ -31,18 +31,19 @@
             if (key == ConsoleKey.UpArrow) 
             {
                 currentScrollValue--;
-                currentScrollValue %= playlistData.Count;
             }
 
             else if (key == ConsoleKey.DownArrow) 
             {
                 currentScrollValue++;
-                currentScrollValue %= playlistData.Count;
             }
 
-            if (currentScrollValue < 0) { currentScrollValue = playlistData.Count; }
-
             this.UpdateLabel();
+        }
+
+        private static int CustomModulus(int x, int m)
+        {
+            return (x % m + m) % m;
         }
 
         public void UpdateLabel() 
@@ -50,11 +51,18 @@
             int orgX = Console.GetCursorPosition().Left;
             int orgY = Console.GetCursorPosition().Top;
 
-            currentScrollValue %= playlistData.Count;
+            // Utility.StaticUtilities.ClearRow(yPos);
+            string val = playlistData[(CustomModulus(currentScrollValue, playlistData.Count))].Value;
 
-            Utility.StaticUtilities.ClearRow(yPos);
+            if (val.Length > Console.WindowWidth - xPos) 
+            {
+                val = val.Substring(0, Console.WindowWidth - xPos - 5) + "...";
+            }
+
+            SpotifyCLI.ClearRow(yPos, xPos, Console.WindowWidth - xPos);
+
             Console.SetCursorPosition(xPos, yPos);
-            Console.Write(playlistData[currentScrollValue].Value);
+            Console.Write(val);
 
             Console.SetCursorPosition(orgX, orgY);
         }

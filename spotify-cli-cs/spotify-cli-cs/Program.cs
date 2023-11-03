@@ -12,6 +12,7 @@ using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using spotify_cli_cs.Components;
 using OpenQA.Selenium.DevTools.V116.Page;
+using spotify_cli_cs.Utility;
 
 // Initialize 
 // ChromeDriver driver = new();
@@ -90,7 +91,8 @@ class SpotifyCLI
 
     private static void DisplaySplashScreenLoadingMessage(string s)
     {
-        ClearRow((Console.WindowHeight / 2) + 4);
+        //ClearRow((Console.WindowHeight / 2) + 4);
+        StaticUtilities.ClearRow((Console.WindowHeight / 2) + 4);
         Console.SetCursorPosition((Console.WindowWidth / 2) - s.Length / 2, (Console.WindowHeight / 2) + 4);
         Console.WriteLine(s + '\n');
     }
@@ -141,7 +143,7 @@ class SpotifyCLI
         {
             while (running)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(20);
                 Tick();
             }
         });
@@ -157,8 +159,8 @@ class SpotifyCLI
 
             if (FOCUSED != null)
             {
-                // PENDING_COMPONENT_KEY = keyData.Key;
-                FOCUSED.HandleKeyInput(keyData.Key);
+                PENDING_COMPONENT_KEY = keyData.Key;
+                // FOCUSED.HandleKeyInput(keyData.Key);
             }
 
             if (keyData.Key == ConsoleKey.Spacebar) { Modify.TogglePlayPause(); }
@@ -210,18 +212,19 @@ class SpotifyCLI
     {
         userPlaylists = Read.GetUserPlaylists();
 
-        playlistView = new(Console.WindowWidth / 2, Console.WindowHeight / 2);
+        playlistView = new();
 
         FOCUSED = playlistView; // by default
     }
 
-    private static void ClearRow(int row)
+    public static void ClearRow(int row, int offset = 0, int? charsToReplace = null)
     {
+        charsToReplace ??= Console.WindowWidth;
         int orgX = Console.GetCursorPosition().Left;
         int orgY = Console.GetCursorPosition().Top;
 
-        Console.SetCursorPosition(0, row);
-        Console.Write(new String(' ', Console.WindowWidth));
+        Console.SetCursorPosition(offset, row);
+        Console.Write(new String(' ', (int)charsToReplace));
 
         Console.SetCursorPosition(orgX, orgY);
     }
@@ -268,7 +271,8 @@ class SpotifyCLI
 
     private static void RedrawCurrentlyPlaying()
     {
-        ClearRow(Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
+        // ClearRow(Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
+        StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 3);
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(Read.GetCurrentlyPlaying());
         currentPlaybackLabel = Read.GetCurrentlyPlaying();
@@ -276,7 +280,8 @@ class SpotifyCLI
 
     private static void RedrawPlaybackDetails()
     {
-        ClearRow(Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM);
+        //ClearRow(Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM);
+        StaticUtilities.ClearRow(Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(ANSI_GRAY + Read.GetPlaybackDetails() + ANSI_RESET);
         playbackDetailsLabel = Read.GetPlaybackDetails();
@@ -308,32 +313,45 @@ class SpotifyCLI
         Console.Write(new String(' ', BOTTOM_BAR_MARGIN_LEFT));
     }
 
-    private static void Tick()
-    {
-        tickCount++;
+    private static ConsoleKey? PENDING_COMPONENT_KEY;
 
-        /*
+    private static void HandlePendingComponentInput() 
+    {
         if (PENDING_COMPONENT_KEY != null && FOCUSED != null)
         {
             FOCUSED.HandleKeyInput((ConsoleKey)PENDING_COMPONENT_KEY);
             PENDING_COMPONENT_KEY = null;
         }
-        */
+    }
+
+    private static void Tick()
+    {
+        tickCount++;
+    HandlePendingComponentInput();
 
         RedrawProgressBar();
         RedrawPlaybackTimeInfo();
+        
+    HandlePendingComponentInput();
 
         if (currentPlaybackLabel != Read.GetCurrentlyPlaying())
         {
             RedrawCurrentlyPlaying();
         }
 
+    HandlePendingComponentInput();
+
+
         if (playbackDetailsLabel != Read.GetPlaybackDetails())
         {
             RedrawPlaybackDetails();
         }
+
+    HandlePendingComponentInput();
         
         RedrawHeartedStatus(); // redraw hearted status AFTER RedrawCurrentlyPlaying()
+    
+    HandlePendingComponentInput();
 
         // if there's a change in the width/height we think it is,
         // and the actual width/height, then it means the terminal was resized
@@ -346,6 +364,8 @@ class SpotifyCLI
 
             OnResizeTerminal();
         }
+
+    HandlePendingComponentInput();
     }
 
     private static void OnResizeTerminal()
@@ -356,6 +376,14 @@ class SpotifyCLI
 
         DrawLineBorderThing(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 5);
 
-        playlistView.UpdateLabel();
+        // reposition playlist view
+        if (playlistView != null)
+        {
+            playlistView.yPos = Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM;
+            playlistView.xPos = Console.WindowWidth - (Console.WindowWidth / 4);
+        }
+
+
+        playlistView?.UpdateLabel();
     }
 }
