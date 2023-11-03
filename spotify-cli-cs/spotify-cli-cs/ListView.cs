@@ -51,7 +51,7 @@ namespace spotify_cli_cs.Components
                         new List<string>() { trackUri }
                     )
                 );
-                
+
                 Console.SetCursorPosition(5, 5);
                 // Console.WriteLine(trackUri + playlistUri);
                 Console.WriteLine(a.Result);

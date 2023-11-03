@@ -26,7 +26,7 @@ class SpotifyCLI
     public static ChromeDriver? driver;
 
     // other
-    private static string SHELL_EXECUTABLE = "cmd.exe";
+    private static string SHELL_EXECUTABLE = "powershell.exe";
     private static string PROGRAM_FILES_DIR = "C:/Users/USER/OneDrive/Desktop/nerd/spotify-cli/spotify-cli-cs/spotify-cli-cs";
 
     public static bool FRONTEND_ONLY = false;
@@ -204,6 +204,7 @@ class SpotifyCLI
 
     // Spotify data
     public static List<KeyValuePair<string, string>> userPlaylists = new(); // in the format <uri, name>
+    public static string? userUri;
 
     // component data
     private static ListView? playlistView;
@@ -211,6 +212,7 @@ class SpotifyCLI
 
     private static void Initialize()
     {
+        userUri = spotify?.UserProfile.Current().Result.Uri;
         userPlaylists = Read.GetUserPlaylists();
 
         playlistView = new();
@@ -390,7 +392,7 @@ class SpotifyCLI
         RedrawPlaybackDetails();
 
         DrawLineBorderThing(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 5);
-
+        
         // reposition playlist view
         if (playlistView != null)
         {

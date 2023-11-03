@@ -132,6 +132,8 @@ namespace spotify_cli_cs
 
                 for (int i = 0; i < playlists!.Count; i++)
                 {
+                    if (playlists[i].Owner.Uri != SpotifyCLI.userUri) continue;
+
                     retval.Add(new KeyValuePair<string, string>(playlists[i].Uri, playlists[i].Name));
                 }
             }
