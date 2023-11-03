@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using spotify_cli_cs.Components;
 using OpenQA.Selenium.DevTools.V116.Page;
 using spotify_cli_cs.Utility;
+using OpenQA.Selenium.DevTools.V116.DOM;
 
 // Initialize 
 // ChromeDriver driver = new();
@@ -272,7 +273,17 @@ class SpotifyCLI
     private static void RedrawCurrentlyPlaying()
     {
         // ClearRow(Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
-        StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 3);
+
+        // if we clear the entire row, we also clear the "Add songs to playlist" header above
+        // the playlistView which is drawn in OnResizeTerminal(). We take care not to erase
+        // that header over here
+        int? charsToReplace = null;
+        if (playlistView != null)
+        {
+            charsToReplace = Console.WindowWidth - playlistView.xPos;
+        }
+
+        StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 3, charsToReplace: charsToReplace);
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(Read.GetCurrentlyPlaying());
         currentPlaybackLabel = Read.GetCurrentlyPlaying();
@@ -387,7 +398,12 @@ class SpotifyCLI
             playlistView.xPos = Console.WindowWidth - (Console.WindowWidth / 3);
         }
 
-
+        // draw title for playlist view
+        if (playlistView != null)
+        {
+            Console.SetCursorPosition(playlistView.xPos, playlistView.yPos - 2);
+            Console.Write(ANSI_GRAY + "Add current song to playlist" + ANSI_RESET);
+        }
         playlistView?.UpdateLabel();
     }
 }
