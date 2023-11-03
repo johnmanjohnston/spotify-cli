@@ -4,7 +4,6 @@
     {
         public abstract void OnFocus();
         public abstract void OnBlur();
-        public abstract void OnEnter();
         public abstract void HandleKeyInput(ConsoleKey key);
 
         public int xPos;

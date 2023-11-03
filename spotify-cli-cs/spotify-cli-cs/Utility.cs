@@ -15,5 +15,10 @@ namespace spotify_cli_cs.Utility
 
             Console.SetCursorPosition(orgX, orgY);
         }
+
+        public static string ANSI_GRAY = "\u001b[38;2;107;107;107m";
+        public static string ANSI_SPOTIFY_GREEN = "\u001b[38;2;30;215;96m";
+        public static string ANSI_DARK_GRAY = "\u001b[38;2;36;36;36m";
+        public static string ANSI_RESET = "\u001b[0m";
     }
 }

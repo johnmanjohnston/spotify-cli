@@ -293,14 +293,14 @@ class SpotifyCLI
         Console.Write(GetProgressBarText());
 
         // clean up any text drawn in the wrong spot due to cursor conflicts
-        Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT + progressBarWidth, Console.WindowHeight - 1 - BOTTOM_BAR_MARGIN_BOTTOM);
+        /* Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT + progressBarWidth, Console.WindowHeight - 1 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(new String(' ', Console.WindowWidth - (BOTTOM_BAR_MARGIN_LEFT + progressBarWidth)));
 
         if (!string.IsNullOrEmpty(currentPlaybackLabel))
         {
             Console.SetCursorPosition(currentPlaybackLabel.Length + 5, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
             Console.Write(new String(' ', Console.WindowWidth - (currentPlaybackLabel.Length + 5)));
-        }
+        } */
     }
 
     private static void RedrawPlaybackTimeInfo()
@@ -326,6 +326,10 @@ class SpotifyCLI
 
     private static void Tick()
     {
+        // We call HandlePendingComponentInput() a lot to reduce the delay between key presses.
+        // We don't carry out the key function for the component immediately when we get the input,
+        // as it can mess with the cursor position and can change where some text gets rendered.
+
         tickCount++;
     HandlePendingComponentInput();
 
@@ -379,8 +383,8 @@ class SpotifyCLI
         // reposition playlist view
         if (playlistView != null)
         {
-            playlistView.yPos = Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM;
-            playlistView.xPos = Console.WindowWidth - (Console.WindowWidth / 4);
+            playlistView.yPos = Console.WindowHeight - 1 - BOTTOM_BAR_MARGIN_BOTTOM;
+            playlistView.xPos = Console.WindowWidth - (Console.WindowWidth / 3);
         }
 
 
