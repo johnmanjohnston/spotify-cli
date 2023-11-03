@@ -281,7 +281,7 @@ class SpotifyCLI
     private static void RedrawPlaybackDetails()
     {
         //ClearRow(Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM);
-        StaticUtilities.ClearRow(Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM);
+        StaticUtilities.ClearRow(Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM, 0, charsToReplace: Read.GetPlaybackDetails().Length);
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(ANSI_GRAY + Read.GetPlaybackDetails() + ANSI_RESET);
         playbackDetailsLabel = Read.GetPlaybackDetails();

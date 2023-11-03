@@ -1,10 +1,11 @@
-﻿using spotify_cli_cs.Utility;
+﻿using OpenQA.Selenium;
+using spotify_cli_cs.Utility;
+using SpotifyAPI.Web;
 
 namespace spotify_cli_cs.Components
 {
     public class ListView : TUIBaseComponent
     {
-        private int displayedEntries = 5; // how many entires we can display at once
         private int currentScrollValue; // how far we have scrolled
         private List<KeyValuePair<string, string>> playlistData;
 
@@ -38,6 +39,22 @@ namespace spotify_cli_cs.Components
             else if (key == ConsoleKey.Enter)
             {
                 // add song to playlist
+                IPlayableItem curPlayingInfo = SpotifyCLI.spotify!.Player.GetCurrentlyPlaying(new PlayerCurrentlyPlayingRequest()).Result.Item;
+                FullTrack track = (FullTrack)curPlayingInfo;
+                string trackUri = track.Uri;
+
+                string playlistUri = playlistData[(CustomModulus(currentScrollValue, playlistData.Count))].Key;
+
+                var a = SpotifyCLI.spotify.Playlists.AddItems(
+                    playlistUri.Split(":")[2],
+                    new PlaylistAddItemsRequest(
+                        new List<string>() { trackUri }
+                    )
+                );
+                
+                Console.SetCursorPosition(5, 5);
+                // Console.WriteLine(trackUri + playlistUri);
+                Console.WriteLine(a.Result);
             }
 
             else return; // don't continue any further if it's a keybind we aren't doing anything for
