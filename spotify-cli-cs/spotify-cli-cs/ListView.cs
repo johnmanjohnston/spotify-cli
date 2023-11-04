@@ -44,6 +44,7 @@ namespace spotify_cli_cs.Components
                 string trackUri = track.Uri;
 
                 string playlistUri = playlistData[(CustomModulus(currentScrollValue, playlistData.Count))].Key;
+                string playlistName = playlistData[(CustomModulus(currentScrollValue, playlistData.Count))].Value;
 
                 var a = SpotifyCLI.spotify.Playlists.AddItems(
                     playlistUri.Split(":")[2],
@@ -52,7 +53,31 @@ namespace spotify_cli_cs.Components
                     )
                 );
 
-                SpotifyCLI.DrawNotificationLabel($"\"{track.Name}\" added to \"{Trunacate(playlistData[(CustomModulus(currentScrollValue, playlistData.Count))].Value)}\"");
+                SpotifyCLI.DrawNotificationLabel($"\"{track.Name}\" added to \"{Trunacate(playlistName)}\"");
+            }
+
+            else if (key == ConsoleKey.Q)
+            {
+
+                IPlayableItem curPlayingInfo = SpotifyCLI.spotify!.Player.GetCurrentlyPlaying(new PlayerCurrentlyPlayingRequest()).Result.Item;
+
+                FullTrack track = (FullTrack)curPlayingInfo;
+                string trackUri = track.Uri;
+
+                string playlistUri = playlistData[(CustomModulus(currentScrollValue, playlistData.Count))].Key;
+                string playlistName = playlistData[(CustomModulus(currentScrollValue, playlistData.Count))].Value;
+
+                SpotifyCLI.DrawNotificationLabel($"Checking if {track.Name} exists in {playlistName}...");
+
+                bool songExistsInPlaylist = Read.SongInPlaylist(trackUri, playlistUri.Split(":")[2]);
+
+                if (songExistsInPlaylist)
+                {
+                    SpotifyCLI.DrawNotificationLabel($"\"{track.Name}\" already exists in \"{Trunacate(playlistName)}\"");
+                } else
+                {
+                    SpotifyCLI.DrawNotificationLabel($"\"{track.Name}\" does not exist in \"{Trunacate(playlistName)}\"");
+                }
             }
 
             else return; // don't continue any further if it's a keybind we aren't doing anything for
