@@ -144,7 +144,7 @@ class SpotifyCLI
         {
             while (running)
             {
-                Thread.Sleep(20);
+                Thread.Sleep(40);
                 Tick();
             }
         });
@@ -218,6 +218,7 @@ class SpotifyCLI
         playlistView = new();
 
         FOCUSED = playlistView; // by default
+        FOCUSED.OnFocus();
     }
 
     public static void ClearRow(int row, int offset = 0, int? charsToReplace = null)
@@ -408,5 +409,13 @@ class SpotifyCLI
             // To underline use this ANSI: Console.Write("\u001b[4masdfasdf\u001b[0m");
         }
         playlistView?.UpdateLabel();
+        DrawNotificationLabel("Notifications will be displayed here.");
+    }
+
+    public static void DrawNotificationLabel(string s)
+    {
+        StaticUtilities.ClearRow(1);
+        Console.SetCursorPosition(2, 1);
+        Console.Write(ANSI_GRAY + s + ANSI_RESET);
     }
 }

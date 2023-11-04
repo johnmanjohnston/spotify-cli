@@ -52,9 +52,7 @@ namespace spotify_cli_cs.Components
                     )
                 );
 
-                Console.SetCursorPosition(5, 5);
-                // Console.WriteLine(trackUri + playlistUri);
-                Console.WriteLine(a.Result);
+                SpotifyCLI.DrawNotificationLabel($"\"{track.Name}\" added to \"{Trunacate(playlistData[(CustomModulus(currentScrollValue, playlistData.Count))].Value)}\"");
             }
 
             else return; // don't continue any further if it's a keybind we aren't doing anything for
