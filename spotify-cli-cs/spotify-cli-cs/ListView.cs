@@ -59,6 +59,18 @@ namespace spotify_cli_cs.Components
 
             else return; // don't continue any further if it's a keybind we aren't doing anything for
 
+            
+            /*
+            IPlayableItem __curPlayingInfo = SpotifyCLI.spotify!.Player.GetCurrentlyPlaying(new PlayerCurrentlyPlayingRequest()).Result.Item;
+            FullTrack __track = (FullTrack)__curPlayingInfo;
+            string __trackUri = __track.Uri;
+            string __playlistUri = playlistData[(CustomModulus(currentScrollValue, playlistData.Count))].Key;
+
+            var playlistID = SpotifyCLI.spotify.Playlists.Get(__playlistUri.Split(":")[2]).Result.Id;
+
+            Read.SongInPlaylist(__trackUri, playlistID.ToString());
+            */
+
             this.UpdateLabel();
         }
 

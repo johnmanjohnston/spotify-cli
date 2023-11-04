@@ -405,6 +405,7 @@ class SpotifyCLI
         {
             Console.SetCursorPosition(playlistView.xPos, playlistView.yPos - 2);
             Console.Write(ANSI_GRAY + "Add current song to playlist" + ANSI_RESET);
+            // To underline use this ANSI: Console.Write("\u001b[4masdfasdf\u001b[0m");
         }
         playlistView?.UpdateLabel();
     }

@@ -1,6 +1,8 @@
 ﻿using OpenQA.Selenium.DevTools.V116.Debugger;
 using SpotifyAPI.Web;
+using Swan;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace spotify_cli_cs 
 {
@@ -125,10 +127,15 @@ namespace spotify_cli_cs
         {
             List<KeyValuePair<string, string>> retval = new();
 
+            PlaylistCurrentUsersRequest req = new() 
+            {
+                Limit = 50,
+            };
+
             if (!SpotifyCLI.FRONTEND_ONLY)
             {
                 SpotifyClient spotify = SpotifyCLI.spotify!;
-                var playlists = spotify!.Playlists.CurrentUsers().Result.Items;
+                var playlists = spotify!.Playlists.CurrentUsers(req).Result.Items;
 
                 for (int i = 0; i < playlists!.Count; i++)
                 {
@@ -147,8 +154,63 @@ namespace spotify_cli_cs
             }
 
             return retval;           
+        }
 
-            
+        private static string GetPlaylistIDFromURI(string uri)
+        {
+            string retval = "";
+
+            var playlist = SpotifyCLI.spotify.Playlists.Get(uri.Split(":")[2]);
+            retval = playlist.Result.Id;
+
+            return retval;
+        }
+
+        public static bool SongInPlaylist(string songUri, string playlistId)
+        {
+            var playlist = SpotifyCLI.spotify?.Playlists.Get(playlistId).Result;
+            int numSongs = (int)playlist!.Tracks!.Total!;
+            int chunks = Floor(numSongs, 100);
+
+            List<Task<bool>> tasks = new();
+
+            for (int i = 0; i <= chunks; i++)
+            {
+                var req = new PlaylistGetItemsRequest()
+                {
+                    Offset = i * 100
+                };
+
+                tasks.Add(Task.Run(() =>
+                {
+                    var playlistItems = SpotifyCLI.spotify?.Playlists.GetItems(playlistId, req).Result;
+                    if (playlistItems == null || playlistItems.Items == null)
+                    {
+                        return false;
+                    }
+
+                    foreach (var item in playlistItems.Items)
+                    {
+                        FullTrack curTrack = (FullTrack)item.Track;
+
+                        if (curTrack.Uri == songUri)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }));
+            }
+
+            Task.WaitAll(tasks.ToArray());
+            return tasks.Any(t => t.Result);
+        }
+
+
+        // https://stackoverflow.com/questions/28059655/floored-integer-division
+        private static int Floor(int a, int b)
+        {
+            return (a / b - Convert.ToInt32(((a < 0) ^ (b < 0)) && (a % b != 0)));
         }
     }
 }
