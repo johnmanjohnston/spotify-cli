@@ -283,7 +283,7 @@ class SpotifyCLI
         int? charsToReplace = null;
         if (playlistView != null)
         {
-            charsToReplace = (Console.WindowWidth - playlistView.xPos) + BOTTOM_BAR_MARGIN_LEFT;
+            charsToReplace = currentPlaybackLabel?.Length + BOTTOM_BAR_MARGIN_LEFT + 2; // +2 chars to accommadate for the hearted status
         }
 
         StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 3, charsToReplace: charsToReplace);
