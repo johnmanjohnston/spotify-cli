@@ -59,6 +59,7 @@ class SpotifyCLI
     private static Thread? tickThread;
     private static bool running = true;
     private static int tickCount = 0;
+    private static int ticksSinceLastScreenResize = 0;
 
     private static string splashScreenArt =
 @"
@@ -164,7 +165,10 @@ class SpotifyCLI
                 // FOCUSED.HandleKeyInput(keyData.Key);
             }
 
-            if (keyData.Key == ConsoleKey.Spacebar) { Modify.TogglePlayPause(); }
+            if (keyData.Key == ConsoleKey.Spacebar) { 
+                Modify.TogglePlayPause(); 
+            }
+
             else if (keyData.Key == ConsoleKey.RightArrow) { Modify.SkipForward(); }
             else if (keyData.Key == ConsoleKey.LeftArrow) { Modify.SkipBack(); }
             else if (keyData.Key == ConsoleKey.F) { Modify.ToggleHeart(); }
@@ -269,7 +273,7 @@ class SpotifyCLI
     {
         if (string.IsNullOrEmpty(currentPlaybackLabel)) return;
 
-        Console.SetCursorPosition(currentPlaybackLabel.Length + 4, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
+        Console.SetCursorPosition(Read.GetCurrentlyPlaying(((Console.WindowWidth / 3) - (BOTTOM_BAR_MARGIN_LEFT + 6)) / 2).Length + 4, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(Read.GetHeartedStatus());
     }
 
@@ -283,19 +287,20 @@ class SpotifyCLI
         int? charsToReplace = null;
         if (playlistView != null)
         {
-            charsToReplace = currentPlaybackLabel?.Length + BOTTOM_BAR_MARGIN_LEFT + 2; // +2 chars to accommadate for the hearted status
+            charsToReplace = (Console.WindowWidth / 3);
         }
 
         StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 3, charsToReplace: charsToReplace);
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
-        Console.Write(Read.GetCurrentlyPlaying());
+        // Console.Write(StaticUtilities.Trunacate(Read.GetCurrentlyPlaying(), (Console.WindowWidth / 3) - (BOTTOM_BAR_MARGIN_LEFT + 6) ));
+        Console.Write(Read.GetCurrentlyPlaying(((Console.WindowWidth / 3) - (BOTTOM_BAR_MARGIN_LEFT + 6)) / 2 ));
         currentPlaybackLabel = Read.GetCurrentlyPlaying();
     }
 
     private static void RedrawPlaybackDetails()
     {
         //ClearRow(Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM);
-        StaticUtilities.ClearRow(Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM, 0, charsToReplace: Read.GetPlaybackDetails().Length + 1);
+        StaticUtilities.ClearRow(Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM, 0, charsToReplace: Read.GetPlaybackDetails().Length + 1 + BOTTOM_BAR_MARGIN_LEFT);
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(ANSI_GRAY + Read.GetPlaybackDetails() + ANSI_RESET);
         playbackDetailsLabel = Read.GetPlaybackDetails();
@@ -345,6 +350,8 @@ class SpotifyCLI
         // as it can mess with the cursor position and can change where some text gets rendered.
 
         tickCount++;
+        ticksSinceLastScreenResize++;
+
     HandlePendingComponentInput();
 
         RedrawProgressBar();
@@ -355,6 +362,17 @@ class SpotifyCLI
         if (currentPlaybackLabel != Read.GetCurrentlyPlaying())
         {
             RedrawCurrentlyPlaying();
+
+            // song change detected
+            // put "loading..." for album
+            // StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1, (Console.WindowWidth / 3) + 1, Console.WindowWidth / 3);
+            // Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2);
+
+            StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1, (Console.WindowWidth / 3) + 1, Console.WindowWidth / 3);
+            Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1);
+            Console.Write("Loading...");
+
+            RedrawPlaybackContext();
         }
 
     HandlePendingComponentInput();
@@ -380,14 +398,28 @@ class SpotifyCLI
             KNOWN_WINDOW_HEIGHT = Console.WindowHeight;
             KNOWN_WINDOW_WIDTH = Console.WindowWidth;
 
+            ticksSinceLastScreenResize = 0;
+
             OnResizeTerminal();
         }
 
     HandlePendingComponentInput();
+
+        if (ticksSinceLastScreenResize < 3 && ticksSinceLastScreenResize > 1) 
+        {
+            curContextLabel = "";
+            RedrawPlaybackContext();
+        }
     }
 
     private static void OnResizeTerminal()
     {
+        if (tickCount < 2) {
+            Modify.TogglePlayPause(); 
+            curContextLabel = "";
+            RedrawPlaybackContext();
+        }
+
         // redraw everything
         RedrawCurrentlyPlaying();
         RedrawPlaybackDetails();
@@ -398,7 +430,7 @@ class SpotifyCLI
         if (playlistView != null)
         {
             playlistView.yPos = Console.WindowHeight - 1 - BOTTOM_BAR_MARGIN_BOTTOM;
-            playlistView.xPos = Console.WindowWidth - (Console.WindowWidth / 3);
+            playlistView.xPos = Console.WindowWidth - (Console.WindowWidth / 3) + 2;
         }
 
         // draw title for playlist view
@@ -410,12 +442,58 @@ class SpotifyCLI
         }
         playlistView?.UpdateLabel();
         DrawNotificationLabel("Notifications will be displayed here.");
+
+        StaticUtilities.DrawVerticalLineDivisor((Console.WindowWidth / 3), Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 4);
+        StaticUtilities.DrawVerticalLineDivisor((Console.WindowWidth / 3) * 2, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 4);
+
+        Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 3);
+        Console.Write("Playback Context");
+    }
+
+    private static string curContextLabel = "";
+    private static string curAlbumLabel = "";
+    private static void RedrawPlaybackContext(bool forceRedrawAlbum = true)
+    {
+        Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2);
+        int x = Console.CursorLeft;
+        int y = Console.CursorTop;
+
+        string[] retval = Read.GetCurrentPlaybackContext();
+        var ctx = StaticUtilities.Trunacate(retval[0], (Console.WindowWidth / 3) - 6);
+        var album = StaticUtilities.Trunacate(retval[1], (Console.WindowWidth / 3) - 9);
+
+        // check if there's a difference between known context and actual context
+        if (ctx != curContextLabel)
+        {
+            StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2, (Console.WindowWidth / 3) + 1, (Console.WindowWidth / 3) - 1);
+            Console.Write(ctx);
+        }
+
+        if (forceRedrawAlbum)
+        {
+            StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1, (Console.WindowWidth / 3) + 1, (Console.WindowWidth / 3) - 1);
+            Console.SetCursorPosition(x, y + 1);
+            Console.Write("on " + album);
+        } 
+
+        else
+        {
+            if (album != curAlbumLabel)
+            {
+                StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1, (Console.WindowWidth / 3) + 1, Console.WindowWidth / 3);
+                Console.SetCursorPosition(x, y + 1);
+                Console.Write("on " + album);
+            }
+        }
+
+        curContextLabel = ctx;
+        curAlbumLabel = album;
     }
 
     public static void DrawNotificationLabel(string s)
     {
         StaticUtilities.ClearRow(1);
         Console.SetCursorPosition(2, 1);
-        Console.Write(ANSI_GRAY + s + ANSI_RESET);
+        Console.Write(ANSI_GRAY + s + ANSI_RESET); 
     }
 }

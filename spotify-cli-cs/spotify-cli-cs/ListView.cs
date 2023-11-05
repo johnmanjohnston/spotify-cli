@@ -58,7 +58,6 @@ namespace spotify_cli_cs.Components
 
             else if (key == ConsoleKey.Q)
             {
-
                 IPlayableItem curPlayingInfo = SpotifyCLI.spotify!.Player.GetCurrentlyPlaying(new PlayerCurrentlyPlayingRequest()).Result.Item;
 
                 FullTrack track = (FullTrack)curPlayingInfo;
@@ -73,10 +72,10 @@ namespace spotify_cli_cs.Components
 
                 if (songExistsInPlaylist)
                 {
-                    SpotifyCLI.DrawNotificationLabel($"\"{track.Name}\" already exists in \"{Trunacate(playlistName)}\"");
+                    SpotifyCLI.DrawNotificationLabel($"\"{track.Name}\" already exists in \"{playlistName}\"");
                 } else
                 {
-                    SpotifyCLI.DrawNotificationLabel($"\"{track.Name}\" does not exist in \"{Trunacate(playlistName)}\"");
+                    SpotifyCLI.DrawNotificationLabel($"\"{track.Name}\" does not exist in \"{playlistName}\"");
                 }
             }
 

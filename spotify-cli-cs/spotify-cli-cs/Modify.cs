@@ -18,11 +18,15 @@ namespace spotify_cli_cs
         {
             l("skipping frwrd");
             SharedElements.GetSkipForwardButton().Click();
+            // SharedElements.GetNowPlayingViewButton().Click();
+            // SharedElements.GetNowPlayingViewButton().Click();
         }
 
         public static void SkipBack()
         {
             SharedElements.GetSkipBackButton().Click();
+            // SharedElements.GetNowPlayingViewButton().Click();
+            // SharedElements.GetNowPlayingViewButton().Click();
         }
 
         public static void ToggleHeart()

@@ -2,6 +2,8 @@ from tokens import *
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
+ACCESS_TOKEN_SAVE_DIR = "C:/Users/USER/OneDrive/Desktop/nerd/spotify-cli/spotify-cli-cs/spotify-cli-cs"
+
 authManager = SpotifyOAuth(client_id=CLIENT_ID,
                                             client_secret=CLIENT_SECRET,
                                             redirect_uri="https://example.com",
@@ -19,7 +21,7 @@ if __name__ == "__main__":
     accessToken = authManager.get_access_token(as_dict=False)
     # print("Recieved access token", accessToken)
 
-    with open("access_token", "w") as f:
+    with open(f"{ACCESS_TOKEN_SAVE_DIR}/access_token", "w") as f:
         f.write(accessToken)
     f.close
 

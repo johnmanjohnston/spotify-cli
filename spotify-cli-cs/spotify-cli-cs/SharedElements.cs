@@ -18,5 +18,8 @@ namespace spotify_cli_cs
         public static IWebElement GetShuffleButton() => driver!.FindElement(By.XPath("//button[@data-testid='control-button-shuffle']"));
         public static IWebElement GetPlaybackPositionDiv() => driver!.FindElement(By.XPath("//div[@data-testid='playback-position']"));
         public static IWebElement GetPlaybackDurationDiv() => driver!.FindElement(By.XPath("//div[@data-testid='playback-duration']"));
+        public static IWebElement GetNextSongLink() => driver!.FindElements(By.XPath("//a[@data-testid='context-item-link']"))[2];
+        public static IWebElement GetNextSongArtistLink() => driver!.FindElements(By.XPath("//a[@data-testid='context-item-info-artist']"))[2];
+        public static IWebElement GetNowPlayingViewButton() => driver!.FindElement(By.XPath("//button[@data-testid='control-button-npv']"));
     }
 }

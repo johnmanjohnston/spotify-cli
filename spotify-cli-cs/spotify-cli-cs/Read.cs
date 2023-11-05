@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium.DevTools.V116.Debugger;
+using spotify_cli_cs.Utility;
 using SpotifyAPI.Web;
 using Swan;
 using System;
@@ -53,13 +54,21 @@ namespace spotify_cli_cs
             }
         }
 
-        public static string GetCurrentlyPlaying()
+        public static string GetCurrentlyPlaying(int? max = null)
         {
             if (SpotifyCLI.FRONTEND_ONLY) return "Read.GetCurrentlyPlaying() and frontend only is enabeld";
 
             try {
-                string retval = $"{SharedElements.GetSongNameLink().Text} - {SharedElements.GetArtistNameLink().Text}";
+                string retval = "";
+                bool trunacate = max != null;
+
+                if (!trunacate)
+                    retval = $"{SharedElements.GetSongNameLink().Text} - {SharedElements.GetArtistNameLink().Text}";
+                else
+                    retval = $"{StaticUtilities.Trunacate(SharedElements.GetSongNameLink().Text, (int)max!)} - {StaticUtilities.Trunacate(SharedElements.GetArtistNameLink().Text, (int)max!)}";
+
                 return retval;
+               
             } catch (Exception e)
             {
                 l("exception for getting cur playing");
@@ -206,6 +215,48 @@ namespace spotify_cli_cs
             return tasks.Any(t => t.Result);
         }
 
+        public static string GetNextSong()
+        {
+            string songName = SharedElements.GetNextSongLink().Text;
+            string artist = SharedElements.GetNextSongArtistLink().Text;
+
+            return $"{songName} - {artist}";
+        }
+
+        public static string[] GetCurrentPlaybackContext()
+        {
+            try
+            {
+                var playbackState = SpotifyCLI.spotify?.Player.GetCurrentPlayback().Result;
+
+                if (playbackState == null) { return new string[] { "no context", "no album" };  }
+
+                // The object type, e.g. "artist", "playlist", "album", 
+                string playbackType = playbackState.Context.Type;
+                string playbackContextItemID = playbackState.Context.Uri.Split(":")[2];
+                string playbackContextItemName = "";
+                string albumName = ((FullTrack)(playbackState.Item)).Album.Name;
+
+                switch(playbackType)
+                {
+                    case "playlist":
+                        playbackContextItemName = SpotifyCLI.spotify?.Playlists.Get(playbackContextItemID).Result.Name!;
+                        break;
+                    case "artist":
+                        playbackContextItemName = SpotifyCLI.spotify?.Artists.Get(playbackContextItemID).Result.Name!;
+                        break;
+                    case "album":
+                        playbackContextItemName = SpotifyCLI.spotify?.Albums.Get(playbackContextItemID).Result.Name!;
+                        break;
+                }
+
+                var ctxItemTotal = $"{playbackType}: {playbackContextItemName}";
+
+                return new string[] { ctxItemTotal, albumName };
+            } 
+            
+            catch (NullReferenceException) { return new string[] { "no context", "no album" };  }
+        }
 
         // https://stackoverflow.com/questions/28059655/floored-integer-division
         private static int Floor(int a, int b)
