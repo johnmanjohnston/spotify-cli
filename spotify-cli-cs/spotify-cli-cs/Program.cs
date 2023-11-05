@@ -394,7 +394,7 @@ class SpotifyCLI
 
     HandlePendingComponentInput();
 
-        if (ticksSinceLastScreenResize < 5 && ticksSinceLastScreenResize > 3) 
+        if (ticksSinceLastScreenResize < 5 && ticksSinceLastScreenResize > 3 && !FRONTEND_ONLY) 
         {
             curContextLabel = "";
             PrepareRedrawSongContext();
@@ -404,7 +404,7 @@ class SpotifyCLI
 
     private static void OnResizeTerminal()
     {
-        if (tickCount < 2) {
+        if (tickCount < 2 && !FRONTEND_ONLY) {
             Modify.TogglePlayPause(); 
             curContextLabel = "";
             RedrawPlaybackContext();
