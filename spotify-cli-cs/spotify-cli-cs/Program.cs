@@ -1,19 +1,8 @@
 ﻿using spotify_cli_cs;
+using spotify_cli_cs.Components;
+using spotify_cli_cs.Utility;
 using OpenQA.Selenium.Chrome;
 using SpotifyAPI.Web;
-using System;
-using SpotifyAPI.Web.Auth;
-using System.IO;
-using System.Threading;
-using OpenQA.Selenium;
-using System.Text;
-using OpenQA.Selenium.DevTools.V116.Network;
-using System.ComponentModel.Design;
-using System.Runtime.CompilerServices;
-using spotify_cli_cs.Components;
-using OpenQA.Selenium.DevTools.V116.Page;
-using spotify_cli_cs.Utility;
-using OpenQA.Selenium.DevTools.V116.DOM;
 
 // Initialize 
 // ChromeDriver driver = new();
@@ -273,7 +262,7 @@ class SpotifyCLI
     {
         if (string.IsNullOrEmpty(currentPlaybackLabel)) return;
 
-        Console.SetCursorPosition(Read.GetCurrentlyPlaying(((Console.WindowWidth / 3) - (BOTTOM_BAR_MARGIN_LEFT + 6)) / 2).Length + 4, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
+        Console.SetCursorPosition(Read.GetCurrentlyPlaying((((Console.WindowWidth / 3) - (BOTTOM_BAR_MARGIN_LEFT + 6)) / 2) - 1).Length + 4, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(Read.GetHeartedStatus());
     }
 
@@ -293,7 +282,7 @@ class SpotifyCLI
         StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 3, charsToReplace: charsToReplace);
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
         // Console.Write(StaticUtilities.Trunacate(Read.GetCurrentlyPlaying(), (Console.WindowWidth / 3) - (BOTTOM_BAR_MARGIN_LEFT + 6) ));
-        Console.Write(Read.GetCurrentlyPlaying(((Console.WindowWidth / 3) - (BOTTOM_BAR_MARGIN_LEFT + 6)) / 2 ));
+        Console.Write(Read.GetCurrentlyPlaying((( (Console.WindowWidth / 3) - (BOTTOM_BAR_MARGIN_LEFT + 6)) / 2 ) - 1));
         currentPlaybackLabel = Read.GetCurrentlyPlaying();
     }
 
@@ -343,6 +332,13 @@ class SpotifyCLI
         }
     }
 
+    private static void PrepareRedrawSongContext()
+    {
+        StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1, (Console.WindowWidth / 3) + 1, Console.WindowWidth / 3);
+        Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1);
+        Console.Write("Loading...");
+    }
+
     private static void Tick()
     {
         // We call HandlePendingComponentInput() a lot to reduce the delay between key presses.
@@ -364,14 +360,7 @@ class SpotifyCLI
             RedrawCurrentlyPlaying();
 
             // song change detected
-            // put "loading..." for album
-            // StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1, (Console.WindowWidth / 3) + 1, Console.WindowWidth / 3);
-            // Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2);
-
-            StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1, (Console.WindowWidth / 3) + 1, Console.WindowWidth / 3);
-            Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1);
-            Console.Write("Loading...");
-
+            PrepareRedrawSongContext();
             RedrawPlaybackContext();
         }
 
@@ -405,9 +394,10 @@ class SpotifyCLI
 
     HandlePendingComponentInput();
 
-        if (ticksSinceLastScreenResize < 3 && ticksSinceLastScreenResize > 1) 
+        if (ticksSinceLastScreenResize < 5 && ticksSinceLastScreenResize > 3) 
         {
             curContextLabel = "";
+            PrepareRedrawSongContext();
             RedrawPlaybackContext();
         }
     }
@@ -447,7 +437,7 @@ class SpotifyCLI
         StaticUtilities.DrawVerticalLineDivisor((Console.WindowWidth / 3) * 2, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 4);
 
         Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 3);
-        Console.Write("Playback Context");
+        Console.Write(ANSI_GRAY + "Playback Context" + ANSI_RESET);
     }
 
     private static string curContextLabel = "";
@@ -466,14 +456,14 @@ class SpotifyCLI
         if (ctx != curContextLabel)
         {
             StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2, (Console.WindowWidth / 3) + 1, (Console.WindowWidth / 3) - 1);
-            Console.Write(ctx);
+            Console.Write(ANSI_GRAY + ctx + ANSI_RESET);
         }
 
         if (forceRedrawAlbum)
         {
             StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1, (Console.WindowWidth / 3) + 1, (Console.WindowWidth / 3) - 1);
             Console.SetCursorPosition(x, y + 1);
-            Console.Write("on " + album);
+            Console.Write(ANSI_GRAY + "on " + ANSI_RESET + album);
         } 
 
         else
@@ -482,7 +472,7 @@ class SpotifyCLI
             {
                 StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 1, (Console.WindowWidth / 3) + 1, Console.WindowWidth / 3);
                 Console.SetCursorPosition(x, y + 1);
-                Console.Write("on " + album);
+                Console.Write(ANSI_GRAY + "on " + ANSI_RESET + album);
             }
         }
 

@@ -35,7 +35,7 @@ namespace spotify_cli_cs.Utility
 
         public static string Trunacate(string s, int max)
         {
-            if (s.Length < max) return s;
+            if (s.Length <= max) return s;
             return s.Substring(0, max) + "…";
         }
 
