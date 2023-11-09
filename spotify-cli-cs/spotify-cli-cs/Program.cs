@@ -180,6 +180,7 @@ class SpotifyCLI
     // labels
     private static string? currentPlaybackLabel;
     private static string? playbackDetailsLabel;
+    private static string? nextSongLabel;
 
     // size
     private static int KNOWN_WINDOW_HEIGHT;
@@ -358,11 +359,10 @@ class SpotifyCLI
         if (currentPlaybackLabel != Read.GetCurrentlyPlaying())
         {
             RedrawCurrentlyPlaying();
-            RedrawHeartedStatus();
+
         }
 
     HandlePendingComponentInput();
-
 
         if (playbackDetailsLabel != Read.GetPlaybackDetails())
         {
@@ -373,6 +373,10 @@ class SpotifyCLI
         
         RedrawHeartedStatus(); // redraw hearted status AFTER RedrawCurrentlyPlaying()
 
+    HandlePendingComponentInput();
+
+        DrawNextSongDetails();
+    
     HandlePendingComponentInput();
 
         // if there's a change in the width/height we think it is,
@@ -396,6 +400,8 @@ class SpotifyCLI
     {
         if (tickCount < 2 && !FRONTEND_ONLY) {
             Modify.TogglePlayPause(); 
+
+            SharedElements.GetNowPlayingViewButton().Click();
         }
 
         // redraw everything
@@ -425,7 +431,7 @@ class SpotifyCLI
         StaticUtilities.DrawVerticalLineDivisor((Console.WindowWidth / 3) * 2, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 4);
 
         Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 3);
-        Console.Write(ANSI_GRAY + "Playback Context" + ANSI_RESET);
+        Console.Write(ANSI_GRAY + "Next song:" + ANSI_RESET);
     }
 
     private static string curContextLabel = "";
@@ -466,6 +472,19 @@ class SpotifyCLI
 
         curContextLabel = ctx;
         curAlbumLabel = album;
+    }
+
+    private static void DrawNextSongDetails()
+    {
+        string? data = Read.GetNextSong();
+        if (data != nextSongLabel && data != null)
+        {
+            Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2);
+            StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2, (Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, (Console.WindowWidth / 3) - 1);
+            Console.Write(ANSI_GRAY + StaticUtilities.Trunacate(data, (Console.WindowWidth / 3) - 6) + ANSI_RESET);
+        }
+
+        nextSongLabel = data;
     }
 
     public static void DrawNotificationLabel(string s)

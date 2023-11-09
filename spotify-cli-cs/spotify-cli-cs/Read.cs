@@ -226,12 +226,16 @@ namespace spotify_cli_cs
             return tasks.Any(t => t.Result);
         }
 
-        public static string GetNextSong()
+        public static string? GetNextSong()
         {
-            string songName = SharedElements.GetNextSongLink().Text;
-            string artist = SharedElements.GetNextSongArtistLink().Text;
+            try
+            {
+                string songName = SharedElements.GetNextSongLink().Text;
+                string artist = SharedElements.GetNextSongArtistLink().Text;
+                return $"{songName} - {artist}";
+            }
 
-            return $"{songName} - {artist}";
+            catch (Exception) { return null;  }
         }
 
         public static string[] GetCurrentPlaybackContext()
