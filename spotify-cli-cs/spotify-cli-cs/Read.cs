@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium.DevTools.V116.Debugger;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.DevTools.V116.Debugger;
 using spotify_cli_cs.Utility;
 using SpotifyAPI.Web;
 using Swan;
@@ -62,10 +63,20 @@ namespace spotify_cli_cs
                 string retval = "";
                 bool trunacate = max != null;
 
-                if (!trunacate)
-                    retval = $"{SharedElements.GetSongNameLink().Text} - {SharedElements.GetArtistNameLink().Text}";
+                // data-testid="context-item-info-ad-subtitle" 
+                if (SpotifyCLI.driver?.FindElements(By.XPath("//a[@data-testid='context-item-info-ad-subtitle']")).Count != 0)
+                {
+                    retval = "Advertisement";
+                } 
+                
                 else
-                    retval = $"{StaticUtilities.Trunacate(SharedElements.GetSongNameLink().Text, (int)max!)} - {StaticUtilities.Trunacate(SharedElements.GetArtistNameLink().Text, (int)max!)}";
+                {
+                    if (!trunacate)
+                        retval = $"{SharedElements.GetSongNameLink().Text} - {SharedElements.GetArtistNameLink().Text}";
+                    else
+                        retval = $"{StaticUtilities.Trunacate(SharedElements.GetSongNameLink().Text, (int)max!)} - {StaticUtilities.Trunacate(SharedElements.GetArtistNameLink().Text, (int)max!)}";
+
+                }
 
                 return retval;
                

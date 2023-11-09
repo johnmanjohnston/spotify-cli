@@ -358,10 +358,7 @@ class SpotifyCLI
         if (currentPlaybackLabel != Read.GetCurrentlyPlaying())
         {
             RedrawCurrentlyPlaying();
-
-            // song change detected
-            PrepareRedrawSongContext();
-            RedrawPlaybackContext();
+            RedrawHeartedStatus();
         }
 
     HandlePendingComponentInput();
@@ -375,7 +372,7 @@ class SpotifyCLI
     HandlePendingComponentInput();
         
         RedrawHeartedStatus(); // redraw hearted status AFTER RedrawCurrentlyPlaying()
-    
+
     HandlePendingComponentInput();
 
         // if there's a change in the width/height we think it is,
@@ -393,21 +390,12 @@ class SpotifyCLI
         }
 
     HandlePendingComponentInput();
-
-        if (ticksSinceLastScreenResize < 5 && ticksSinceLastScreenResize > 3 && !FRONTEND_ONLY) 
-        {
-            curContextLabel = "";
-            PrepareRedrawSongContext();
-            RedrawPlaybackContext();
-        }
     }
 
     private static void OnResizeTerminal()
     {
         if (tickCount < 2 && !FRONTEND_ONLY) {
             Modify.TogglePlayPause(); 
-            curContextLabel = "";
-            RedrawPlaybackContext();
         }
 
         // redraw everything
