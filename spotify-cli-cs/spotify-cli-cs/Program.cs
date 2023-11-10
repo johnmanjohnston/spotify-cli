@@ -359,7 +359,6 @@ class SpotifyCLI
         if (currentPlaybackLabel != Read.GetCurrentlyPlaying())
         {
             RedrawCurrentlyPlaying();
-
         }
 
     HandlePendingComponentInput();

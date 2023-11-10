@@ -228,6 +228,8 @@ namespace spotify_cli_cs
 
         public static string? GetNextSong()
         {
+            if (SpotifyCLI.FRONTEND_ONLY) { return "Read.GetNextSong() with FRONTEND_ONLY enabled"; }
+            
             try
             {
                 string songName = SharedElements.GetNextSongLink().Text;
