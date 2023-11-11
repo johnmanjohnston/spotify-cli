@@ -201,8 +201,16 @@ class SpotifyCLI
     public static string? userUri;
 
     // component data
-    private static ListView? playlistView;
+    private static AddToPlaylistListView? playlistView;
     private static TUIBaseComponent? FOCUSED;
+
+    private enum Tab { 
+        Library,
+        Search, 
+        Playing  // same tab format for playing albums/playlists
+    };
+
+    private static Tab tabState;
 
     private static void Initialize()
     {
@@ -213,6 +221,8 @@ class SpotifyCLI
 
         FOCUSED = playlistView; // by default
         FOCUSED.OnFocus();
+
+        tabState = Tab.Library;
     }
 
     public static void ClearRow(int row, int offset = 0, int? charsToReplace = null)
@@ -349,6 +359,8 @@ class SpotifyCLI
         tickCount++;
         ticksSinceLastScreenResize++;
 
+        DrawTabContent();
+
     HandlePendingComponentInput();
 
         RedrawProgressBar();
@@ -431,6 +443,8 @@ class SpotifyCLI
 
         Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 3);
         Console.Write(ANSI_GRAY + "Next song:" + ANSI_RESET);
+
+        nextSongLabel = null; // to redraw
     }
 
     private static string curContextLabel = "";
@@ -491,5 +505,30 @@ class SpotifyCLI
         StaticUtilities.ClearRow(1);
         Console.SetCursorPosition(2, 1);
         Console.Write(ANSI_GRAY + s + ANSI_RESET); 
+    }
+
+    private static void DrawTabContent()
+    {
+        Console.SetCursorPosition(2, 3);
+        
+        for (int i = 0; i < 3; i++)
+        {
+            if ((Tab)i != tabState)
+            {
+                Console.Write(ANSI_GRAY);
+            }
+
+            Console.Write((Tab)i + " / ");
+
+            if ((Tab)i != tabState)
+            {
+                Console.Write(ANSI_RESET);
+            }
+        }
+
+        if (tabState == Tab.Library)
+        {
+
+        }
     }
 }

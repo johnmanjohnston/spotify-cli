@@ -4,12 +4,12 @@ using SpotifyAPI.Web;
 
 namespace spotify_cli_cs.Components
 {
-    public class ListView : TUIBaseComponent
+    public class AddToPlaylistListView : TUIBaseComponent
     {
         private int currentScrollValue; // how far we have scrolled
         private List<KeyValuePair<string, string>> playlistData;
 
-        public ListView(int x = 0, int y = 0) : base(x, y)
+        public AddToPlaylistListView(int x = 0, int y = 0) : base(x, y)
         {
             this.playlistData = SpotifyCLI.userPlaylists;
         }
