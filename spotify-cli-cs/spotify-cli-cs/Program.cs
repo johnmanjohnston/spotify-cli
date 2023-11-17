@@ -3,6 +3,8 @@ using spotify_cli_cs.Components;
 using spotify_cli_cs.Utility;
 using OpenQA.Selenium.Chrome;
 using SpotifyAPI.Web;
+using OpenQA.Selenium.DevTools.V116.Debugger;
+using System.Runtime.CompilerServices;
 
 // Initialize 
 // ChromeDriver driver = new();
@@ -158,6 +160,10 @@ class SpotifyCLI
                 Modify.TogglePlayPause(); 
             }
 
+            // handle tab switching
+            else if (keyData.Key == ConsoleKey.OemPeriod) { tabState = (Tab)((int)((tabState) + 1) % 3); PENDING_UPDATE_TAB_CONTENT = true; }
+            else if (keyData.Key == ConsoleKey.OemComma) { tabState = (Tab)(((int)((tabState) - 1) + 3) % 3); PENDING_UPDATE_TAB_CONTENT = true; }
+
             else if (keyData.Key == ConsoleKey.RightArrow) { Modify.SkipForward(); }
             else if (keyData.Key == ConsoleKey.LeftArrow) { Modify.SkipBack(); }
             else if (keyData.Key == ConsoleKey.F) { Modify.ToggleHeart(); }
@@ -187,10 +193,10 @@ class SpotifyCLI
     private static int KNOWN_WINDOW_WIDTH;
 
     // colors
-    private static string ANSI_GRAY = "\u001b[38;2;107;107;107m";
-    private static string ANSI_SPOTIFY_GREEN = "\u001b[38;2;30;215;96m";
-    private static string ANSI_DARK_GRAY = "\u001b[38;2;36;36;36m";
-    private static string ANSI_RESET = "\u001b[0m";
+    public static string ANSI_GRAY = "\u001b[38;2;107;107;107m";
+    public static string ANSI_SPOTIFY_GREEN = "\u001b[38;2;30;215;96m";
+    public static string ANSI_DARK_GRAY = "\u001b[38;2;36;36;36m";
+    public static string ANSI_RESET = "\u001b[0m";
 
     // margins
     private static int BOTTOM_BAR_MARGIN_LEFT = 3;
@@ -202,7 +208,9 @@ class SpotifyCLI
 
     // component data
     private static AddToPlaylistListView? playlistView;
+    private static UserLibraryListView? userLibListView;
     private static TUIBaseComponent? FOCUSED;
+    private static bool PENDING_UPDATE_TAB_CONTENT = false;
 
     private enum Tab { 
         Library,
@@ -218,11 +226,13 @@ class SpotifyCLI
         userPlaylists = Read.GetUserPlaylists();
 
         playlistView = new();
+        userLibListView = new();
 
-        FOCUSED = playlistView; // by default
+        FOCUSED = userLibListView; // by default
         FOCUSED.OnFocus();
 
         tabState = Tab.Library;
+        PENDING_UPDATE_TAB_CONTENT = true;
     }
 
     public static void ClearRow(int row, int offset = 0, int? charsToReplace = null)
@@ -359,9 +369,9 @@ class SpotifyCLI
         tickCount++;
         ticksSinceLastScreenResize++;
 
-        DrawTabContent();
+        if (PENDING_UPDATE_TAB_CONTENT) { DrawTabContent(); PENDING_UPDATE_TAB_CONTENT = false; }
 
-    HandlePendingComponentInput();
+    HandlePendingComponentInput(); UpdateTabOverheadPanel();
 
         RedrawProgressBar();
         RedrawPlaybackTimeInfo();
@@ -373,7 +383,7 @@ class SpotifyCLI
             RedrawCurrentlyPlaying();
         }
 
-    HandlePendingComponentInput();
+    HandlePendingComponentInput(); UpdateTabOverheadPanel();
 
         if (playbackDetailsLabel != Read.GetPlaybackDetails())
         {
@@ -381,10 +391,10 @@ class SpotifyCLI
         }
 
     HandlePendingComponentInput();
-        
+
         RedrawHeartedStatus(); // redraw hearted status AFTER RedrawCurrentlyPlaying()
 
-    HandlePendingComponentInput();
+    HandlePendingComponentInput(); UpdateTabOverheadPanel();
 
         DrawNextSongDetails();
     
@@ -404,7 +414,7 @@ class SpotifyCLI
             OnResizeTerminal();
         }
 
-    HandlePendingComponentInput();
+    HandlePendingComponentInput(); UpdateTabOverheadPanel();
     }
 
     private static void OnResizeTerminal()
@@ -445,6 +455,10 @@ class SpotifyCLI
         Console.Write(ANSI_GRAY + "Next song:" + ANSI_RESET);
 
         nextSongLabel = null; // to redraw
+
+        // Take care of rerendering tabs
+        userLibListView!.entiresToDisplay = (Console.WindowHeight / 2) - 4;
+        DrawTabContent(redraw: true);
     }
 
     private static string curContextLabel = "";
@@ -507,7 +521,7 @@ class SpotifyCLI
         Console.Write(ANSI_GRAY + s + ANSI_RESET); 
     }
 
-    private static void DrawTabContent()
+    private static void UpdateTabOverheadPanel()
     {
         Console.SetCursorPosition(2, 3);
         
@@ -525,10 +539,34 @@ class SpotifyCLI
                 Console.Write(ANSI_RESET);
             }
         }
+    }
 
+    private static void DrawTabContent(bool redraw = false)
+    {
         if (tabState == Tab.Library)
         {
+            // handle "Made for you" section -- get Discover Weekly and Release Radar playlists
+            Task<SearchResponse>? discoverWeeklySearch = spotify?.Search.Item(
+                new SearchRequest(SearchRequest.Types.Playlist, "discover weekly")  
+            );
 
+            Task<SearchResponse>? releaseRadarSearch = spotify?.Search.Item(
+                new SearchRequest(SearchRequest.Types.Playlist, "releaseRadar")
+            );
+
+            var relaseRadar = releaseRadarSearch!.Result.Playlists.Items!.FirstOrDefault();
+            var discoverWeekly = discoverWeeklySearch!.Result.Playlists.Items!.FirstOrDefault();
+
+            userLibListView!.libData!.Add(new KeyValuePair<string, string>(relaseRadar!.Uri, relaseRadar!.Name));
+            userLibListView.libData.Add(new KeyValuePair<string, string>(discoverWeekly!.Uri, discoverWeekly!.Name));
+         
+            // now, user playlists
+            foreach(var playlist in userPlaylists)
+            {
+                userLibListView.libData.Add(new KeyValuePair<string, string>(playlist.Key, playlist.Value));
+            }
+
+            if (redraw) userLibListView.UpdateLabel();
         }
     }
 }
