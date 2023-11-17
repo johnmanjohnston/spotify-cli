@@ -29,7 +29,6 @@ namespace spotify_cli_cs.Components
 
         public override void OnBlur()
         {
-            throw new NotImplementedException();
         }
 
         public override void OnFocus()

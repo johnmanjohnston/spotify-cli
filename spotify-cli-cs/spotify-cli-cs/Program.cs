@@ -5,6 +5,7 @@ using OpenQA.Selenium.Chrome;
 using SpotifyAPI.Web;
 using OpenQA.Selenium.DevTools.V116.Debugger;
 using System.Runtime.CompilerServices;
+using System.ComponentModel.Design;
 
 // Initialize 
 // ChromeDriver driver = new();
@@ -164,6 +165,15 @@ class SpotifyCLI
             else if (keyData.Key == ConsoleKey.OemPeriod) { tabState = (Tab)((int)((tabState) + 1) % 3); PENDING_UPDATE_TAB_CONTENT = true; }
             else if (keyData.Key == ConsoleKey.OemComma) { tabState = (Tab)(((int)((tabState) - 1) + 3) % 3); PENDING_UPDATE_TAB_CONTENT = true; }
 
+            else if (keyData.Key == ConsoleKey.Tab) 
+            {
+                focusIndex++;
+                focusIndex %= components.Count;
+                FOCUSED!.OnBlur();
+                FOCUSED = components[focusIndex];
+                FOCUSED.OnFocus();
+            }
+
             else if (keyData.Key == ConsoleKey.RightArrow) { Modify.SkipForward(); }
             else if (keyData.Key == ConsoleKey.LeftArrow) { Modify.SkipBack(); }
             else if (keyData.Key == ConsoleKey.F) { Modify.ToggleHeart(); }
@@ -203,7 +213,8 @@ class SpotifyCLI
     private static int BOTTOM_BAR_MARGIN_BOTTOM = 3;
 
     // Spotify data
-    public static List<KeyValuePair<string, string>> userPlaylists = new(); // in the format <uri, name>
+    public static List<KeyValuePair<string, string>> userPlaylists = new(); // in the format <uri, name> ONLY WHICH ONES USER OWNS
+    public static List<KeyValuePair<string, string>> allUserSavedPlaylists = new(); // in the format <uri, name>
     public static string? userUri;
 
     // component data
@@ -211,6 +222,9 @@ class SpotifyCLI
     private static UserLibraryListView? userLibListView;
     private static TUIBaseComponent? FOCUSED;
     private static bool PENDING_UPDATE_TAB_CONTENT = false;
+
+    private static List<TUIBaseComponent> components = new();
+    private static int focusIndex = 0;
 
     private enum Tab { 
         Library,
@@ -224,6 +238,7 @@ class SpotifyCLI
     {
         userUri = spotify?.UserProfile.Current().Result.Uri;
         userPlaylists = Read.GetUserPlaylists();
+        allUserSavedPlaylists = Read.GetUserPlaylists(false);
 
         playlistView = new();
         userLibListView = new();
@@ -233,6 +248,9 @@ class SpotifyCLI
 
         tabState = Tab.Library;
         PENDING_UPDATE_TAB_CONTENT = true;
+
+        components.Add(userLibListView);
+        components.Add(playlistView);
     }
 
     public static void ClearRow(int row, int offset = 0, int? charsToReplace = null)
@@ -557,13 +575,13 @@ class SpotifyCLI
             var relaseRadar = releaseRadarSearch!.Result.Playlists.Items!.FirstOrDefault();
             var discoverWeekly = discoverWeeklySearch!.Result.Playlists.Items!.FirstOrDefault();
 
-            userLibListView!.libData!.Add(new KeyValuePair<string, string>(relaseRadar!.Uri, relaseRadar!.Name));
-            userLibListView.libData.Add(new KeyValuePair<string, string>(discoverWeekly!.Uri, discoverWeekly!.Name));
+            userLibListView!.libData!.Add(new KeyValuePair<string, string>(relaseRadar!.Uri, "Made for you - " + relaseRadar!.Name));
+            userLibListView.libData.Add(new KeyValuePair<string, string>(discoverWeekly!.Uri, "Made for you - " + discoverWeekly!.Name));
          
             // now, user playlists
-            foreach(var playlist in userPlaylists)
+            foreach(var playlist in allUserSavedPlaylists)
             {
-                userLibListView.libData.Add(new KeyValuePair<string, string>(playlist.Key, playlist.Value));
+                userLibListView.libData.Add(new KeyValuePair<string, string>(playlist.Key, "🗀 - " + playlist.Value));
             }
 
             if (redraw) userLibListView.UpdateLabel();

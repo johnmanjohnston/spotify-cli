@@ -143,7 +143,7 @@ namespace spotify_cli_cs
         /// Returns user playlist URI and name in a list of key value pairs for the logged in user.
         /// If FRONTEND_ONLY is enabled, 5 demo URIs and names in a list of key value pairs are returned.
         /// </summary>
-        public static List<KeyValuePair<string, string>> GetUserPlaylists() 
+        public static List<KeyValuePair<string, string>> GetUserPlaylists(bool owned = true) 
         {
             List<KeyValuePair<string, string>> retval = new();
 
@@ -159,7 +159,7 @@ namespace spotify_cli_cs
 
                 for (int i = 0; i < playlists!.Count; i++)
                 {
-                    if (playlists[i].Owner.Uri != SpotifyCLI.userUri) continue;
+                    if (playlists[i].Owner.Uri != SpotifyCLI.userUri && owned) continue;
 
                     retval.Add(new KeyValuePair<string, string>(playlists[i].Uri, playlists[i].Name));
                 }

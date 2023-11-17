@@ -16,12 +16,10 @@ namespace spotify_cli_cs.Components
 
         public override void OnFocus()
         {
-            Console.Write("OnFocus() on ListView");   
         }
 
         public override void OnBlur()
         {
-            throw new NotImplementedException();
         }
 
         public override void HandleKeyInput(ConsoleKey key)
