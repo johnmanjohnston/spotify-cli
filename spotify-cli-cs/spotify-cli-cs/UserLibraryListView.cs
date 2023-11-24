@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium.DevTools.V116.Storage;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.DevTools.V116.Storage;
 using spotify_cli_cs.Utility;
 using System.Linq;
 
@@ -22,6 +23,15 @@ namespace spotify_cli_cs.Components
             {
                 currentScrollValue++;
             }
+
+            else if (key == ConsoleKey.Enter)
+            {
+                Modify.GoToItemWithUri(libData![(CustomModulus(currentScrollValue, libData.Count))].Key, SpotifyCLI.driver!);
+                Thread.Sleep(1000);
+                SpotifyCLI.driver.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']")).SendKeys(OpenQA.Selenium.Keys.PageDown);
+                SpotifyCLI.driver.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']")).SendKeys(OpenQA.Selenium.Keys.PageDown);
+            }
+
             else return;
 
             this.UpdateLabel();
@@ -44,7 +54,7 @@ namespace spotify_cli_cs.Components
                 Console.SetCursorPosition(2, 5 + (entiresToDisplay / 2) + i);
                 StaticUtilities.ClearRow(5 + (entiresToDisplay / 2) + i);
                 
-                if (i == 1)
+                if (i == 0)
                 {
                     Console.Write(val);
                 } else

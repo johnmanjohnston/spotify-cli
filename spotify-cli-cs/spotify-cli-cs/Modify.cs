@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 
 namespace spotify_cli_cs
 {
@@ -46,6 +47,20 @@ namespace spotify_cli_cs
         public static void ChangeShuffleMode()
         {
             SharedElements.GetShuffleButton().Click();
+        }
+
+        public static void GoToItemWithUri(string uri, ChromeDriver driver)
+        {
+            // get search btn
+            var searchBtn = driver.FindElement(By.XPath("//a[@href='/search']"));
+            searchBtn.Click();
+
+            Thread.Sleep(10);
+
+            var searchInput = SpotifyCLI.driver.FindElement(By.XPath("//input[@data-testid='search-input']"));
+            searchInput.Click();
+            searchInput.SendKeys(uri);
+            searchInput.Submit();
         }
     }   
 }

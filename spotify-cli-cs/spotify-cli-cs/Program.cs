@@ -100,7 +100,18 @@ class SpotifyCLI
             // initialize Spotify client
             DisplaySplashScreenLoadingMessage("Preparing Spotify authentication");
             WriteAccessToken();
-            spotify = new(GetAccessToken());
+
+            for (int i = 0; i < 3; i++)
+            {
+                try
+                {
+                    spotify = new(GetAccessToken());
+                    var t = spotify?.UserProfile.Current().Result.Uri;
+                    break;
+                }
+                catch { Thread.Sleep(500); DisplaySplashScreenLoadingMessage("Auth failed.");  continue; }
+            }
+            
             Thread.Sleep(2000);
 
             // initialize webdriver
@@ -236,7 +247,7 @@ class SpotifyCLI
 
     private static void Initialize()
     {
-        userUri = spotify?.UserProfile.Current().Result.Uri;
+         userUri = spotify?.UserProfile.Current().Result.Uri;
         userPlaylists = Read.GetUserPlaylists();
         allUserSavedPlaylists = Read.GetUserPlaylists(false);
 

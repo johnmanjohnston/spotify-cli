@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.DevTools.V116.Page;
 
 namespace spotify_cli_cs
 {
@@ -31,5 +32,9 @@ namespace spotify_cli_cs
         }
 
         public static IWebElement GetNowPlayingViewButton() => driver!.FindElement(By.XPath("//button[@data-testid='control-button-npv']"));
+
+        public static IWebElement GetPlaylistTrackList() => driver!.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']"));
+        public static IWebElement GetTracklist() => driver!.FindElement(By.XPath("//div[@data-testid='track-list']"));
+        public static IWebElement CurrentContextTracklist() => GetPlaylistTrackList() ?? GetTracklist();
     }
 }
