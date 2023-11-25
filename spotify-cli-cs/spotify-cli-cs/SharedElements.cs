@@ -36,5 +36,16 @@ namespace spotify_cli_cs
         public static IWebElement GetPlaylistTrackList() => driver!.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']"));
         public static IWebElement GetTracklist() => driver!.FindElement(By.XPath("//div[@data-testid='track-list']"));
         public static IWebElement CurrentContextTracklist() => GetPlaylistTrackList() ?? GetTracklist();
+
+        public static List<IWebElement> CurrentTracklistSongChunk() 
+        {
+            // TO DO: REMOVE THE NEDDLESS CONVERSION OF LIST -> ARRAY -> LIST
+
+            int maxElementsInChunk = 5;
+            IWebElement[] tracklistRows = CurrentContextTracklist().FindElements(By.XPath(".//div[@data-testid='tracklist-row']")).ToArray();
+            IWebElement[] retval = new IWebElement[maxElementsInChunk];
+            Array.Copy(tracklistRows, retval, maxElementsInChunk);
+            return retval.ToList();
+        }
     }
 }

@@ -6,6 +6,7 @@ using SpotifyAPI.Web;
 using OpenQA.Selenium.DevTools.V116.Debugger;
 using System.Runtime.CompilerServices;
 using System.ComponentModel.Design;
+using spotify_cli_cs.Models;
 
 // Initialize 
 // ChromeDriver driver = new();
@@ -240,14 +241,15 @@ class SpotifyCLI
     private enum Tab { 
         Library,
         Search, 
-        Playing  // same tab format for playing albums/playlists
+        Tracklist  // same tab format for playing albums/playlists
     };
 
     private static Tab tabState;
+    private static List<TracklistItem> tracklist;
 
     private static void Initialize()
     {
-         userUri = spotify?.UserProfile.Current().Result.Uri;
+        userUri = spotify?.UserProfile.Current().Result.Uri;
         userPlaylists = Read.GetUserPlaylists();
         allUserSavedPlaylists = Read.GetUserPlaylists(false);
 
@@ -398,11 +400,16 @@ class SpotifyCLI
         tickCount++;
         ticksSinceLastScreenResize++;
 
+    HandlePendingComponentInput();
+
         if (PENDING_UPDATE_TAB_CONTENT) { DrawTabContent(); PENDING_UPDATE_TAB_CONTENT = false; }
 
     HandlePendingComponentInput(); UpdateTabOverheadPanel();
 
         RedrawProgressBar();
+
+    HandlePendingComponentInput();
+
         RedrawPlaybackTimeInfo();
         
     HandlePendingComponentInput();
@@ -574,6 +581,13 @@ class SpotifyCLI
     {
         if (tabState == Tab.Library)
         {
+            if (components.Contains(userLibListView!) == false)
+            {
+                components.Add(userLibListView!);
+                FOCUSED = userLibListView;
+                userLibListView!.UpdateLabel();
+            }
+
             // handle "Made for you" section -- get Discover Weekly and Release Radar playlists
             Task<SearchResponse>? discoverWeeklySearch = spotify?.Search.Item(
                 new SearchRequest(SearchRequest.Types.Playlist, "discover weekly")  
@@ -597,5 +611,39 @@ class SpotifyCLI
 
             if (redraw) userLibListView.UpdateLabel();
         }
+
+        else if (tabState == Tab.Tracklist)
+        {
+            // start from coordinates (2, 5)
+
+            components.Remove(userLibListView!);
+            FOCUSED = null;
+
+            for (int i = 0; i < Console.WindowHeight - 12; i++)
+            {
+                Console.SetCursorPosition(2, 3 + i);
+                Console.Write(new string(' ', Console.WindowWidth - 1));
+            }
+
+            Console.SetCursorPosition(2, 5);
+            Console.Write("THIS IS THE TRACKLIST TAB AHSDKFHJASKDFH");
+
+            for (int i = 0; i < tracklist.Count; i++)
+            {
+                Console.SetCursorPosition(2, 6 + i);
+                Console.Write(tracklist[i].name + " on " + tracklist[i].album);
+            }
+        }
+    }
+
+    public static void UpdateAndOpenTracklistView(List<TracklistItem> newData)
+    {
+        tracklist = newData;
+        tabState = Tab.Tracklist
+            ;
+        PENDING_UPDATE_TAB_CONTENT = true;
+
+        components.Remove(userLibListView);
+        FOCUSED = null;
     }
 }

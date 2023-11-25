@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.DevTools.V116.Storage;
+using spotify_cli_cs.Models;
 using spotify_cli_cs.Utility;
 using System.Linq;
 
@@ -28,8 +29,23 @@ namespace spotify_cli_cs.Components
             {
                 Modify.GoToItemWithUri(libData![(CustomModulus(currentScrollValue, libData.Count))].Key, SpotifyCLI.driver!);
                 Thread.Sleep(1000);
-                SpotifyCLI.driver.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']")).SendKeys(OpenQA.Selenium.Keys.PageDown);
-                SpotifyCLI.driver.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']")).SendKeys(OpenQA.Selenium.Keys.PageDown);
+
+                SpotifyCLI.driver!.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']")).SendKeys(OpenQA.Selenium.Keys.PageDown);
+                
+                List<TracklistItem> tracklistData = new();
+                foreach (var s in SharedElements.CurrentTracklistSongChunk())
+                {
+                    var titleElement = s.FindElements(By.XPath(".//a[@data-testid='internal-track-link']"))[0];
+                    var albumElement = s.FindElements(By.XPath(".//a[@class='standalone-ellipsis-one-line'][@draggable='true']"))[0];
+
+                    tracklistData.Add(new TracklistItem() 
+                    {
+                        name = titleElement.Text,
+                        album = albumElement.Text,
+                    });
+                }
+
+                SpotifyCLI.UpdateAndOpenTracklistView(tracklistData);
             }
 
             else return;
