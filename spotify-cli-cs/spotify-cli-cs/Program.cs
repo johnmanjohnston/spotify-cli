@@ -166,6 +166,7 @@ class SpotifyCLI
             if (FOCUSED != null)
             {
                 PENDING_COMPONENT_KEY = keyData.Key;
+                // HandlePendingComponentInput(); // REMOVE 
                 // FOCUSED.HandleKeyInput(keyData.Key);
             }
 
@@ -314,6 +315,8 @@ class SpotifyCLI
     {
         if (string.IsNullOrEmpty(currentPlaybackLabel)) return;
 
+HandlePendingComponentInput();
+
         Console.SetCursorPosition(Read.GetCurrentlyPlaying((((Console.WindowWidth / 3) - (BOTTOM_BAR_MARGIN_LEFT + 6)) / 2) - 1).Length + 4, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(Read.GetHeartedStatus());
     }
@@ -342,6 +345,9 @@ class SpotifyCLI
     {
         //ClearRow(Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM);
         StaticUtilities.ClearRow(Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM, 0, charsToReplace: Read.GetPlaybackDetails().Length + 1 + BOTTOM_BAR_MARGIN_LEFT);
+
+HandlePendingComponentInput();
+        
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - 2 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(ANSI_GRAY + Read.GetPlaybackDetails() + ANSI_RESET);
         playbackDetailsLabel = Read.GetPlaybackDetails();
@@ -368,6 +374,8 @@ class SpotifyCLI
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(ANSI_GRAY + Read.GetPlaybackTimeInfo() + ANSI_RESET);
 
+HandlePendingComponentInput();
+
         // clean up any text drawn in the wrong spot due to cursor conflicts
         Console.SetCursorPosition(0, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(new String(' ', BOTTOM_BAR_MARGIN_LEFT));
@@ -375,7 +383,7 @@ class SpotifyCLI
 
     private static ConsoleKey? PENDING_COMPONENT_KEY;
 
-    private static void HandlePendingComponentInput() 
+    public static void HandlePendingComponentInput() 
     {
         if (PENDING_COMPONENT_KEY != null && FOCUSED != null)
         {
@@ -539,14 +547,23 @@ class SpotifyCLI
 
     private static void DrawNextSongDetails()
     {
+HandlePendingComponentInput();
+
         string? data = Read.GetNextSong();
+
+HandlePendingComponentInput();
+
         if (data != nextSongLabel && data != null)
         {
             Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2);
             StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2, (Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, (Console.WindowWidth / 3) - 1);
+
+HandlePendingComponentInput();
+
             Console.Write(ANSI_GRAY + StaticUtilities.Trunacate(data, (Console.WindowWidth / 3) - 6) + ANSI_RESET);
         }
 
+HandlePendingComponentInput();
         nextSongLabel = data;
     }
 

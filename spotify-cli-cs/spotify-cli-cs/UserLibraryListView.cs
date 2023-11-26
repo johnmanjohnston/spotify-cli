@@ -28,7 +28,8 @@ namespace spotify_cli_cs.Components
             else if (key == ConsoleKey.Enter)
             {
                 Modify.GoToItemWithUri(libData![(CustomModulus(currentScrollValue, libData.Count))].Key, SpotifyCLI.driver!);
-                Thread.Sleep(1000);
+                return;
+                Thread.Sleep(500);
 
                 SpotifyCLI.driver!.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']")).SendKeys(OpenQA.Selenium.Keys.PageDown);
                 

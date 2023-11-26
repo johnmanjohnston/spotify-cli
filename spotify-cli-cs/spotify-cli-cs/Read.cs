@@ -35,6 +35,9 @@ namespace spotify_cli_cs
             }
         }
 
+        /// <summary>
+        /// IMPORTANT: THIS CALLS SpotifyCLI.HandlePendingComponentInput() TO REDUCE INPUT LAG
+        /// </summary>
         public static string GetPlaybackTimeInfo()
         {
             if (SpotifyCLI.FRONTEND_ONLY) return "read.getPlaybackTimeInfo() called with frontend only enabled";
@@ -43,6 +46,8 @@ namespace spotify_cli_cs
             {
                 string pos = SharedElements.GetPlaybackPositionDiv().Text;
                 string duration = SharedElements.GetPlaybackDurationDiv().Text.TrimStart('-');
+
+    SpotifyCLI.HandlePendingComponentInput();
 
                 string retval = $"{pos} / {duration}";
 
@@ -55,6 +60,9 @@ namespace spotify_cli_cs
             }
         }
 
+        /// <summary>
+        /// IMPORTANT: THIS CALLS SpotifyCLI.HandlePendingComponentInput() TO REDUCE INPUT LAG
+        /// </summary>
         public static string GetCurrentlyPlaying(int? max = null)
         {
             if (SpotifyCLI.FRONTEND_ONLY) return "Read.GetCurrentlyPlaying() and frontend only is enabeld";
@@ -66,17 +74,21 @@ namespace spotify_cli_cs
                 // data-testid="context-item-info-ad-subtitle" 
                 if (SpotifyCLI.driver?.FindElements(By.XPath("//a[@data-testid='context-item-info-ad-subtitle']")).Count != 0)
                 {
-                    retval = "Advertisement";
+                    return retval;
                 } 
                 
                 else
                 {
+    SpotifyCLI.HandlePendingComponentInput();
+
                     if (!trunacate)
                         retval = $"{SharedElements.GetSongNameLink().Text} - {SharedElements.GetArtistNameLink().Text}";
                     else
                         retval = $"{StaticUtilities.Trunacate(SharedElements.GetSongNameLink().Text, (int)max!)} - {StaticUtilities.Trunacate(SharedElements.GetArtistNameLink().Text, (int)max!)}";
 
                 }
+
+    SpotifyCLI.HandlePendingComponentInput();
 
                 return retval;
                
@@ -88,6 +100,9 @@ namespace spotify_cli_cs
             }
         }
 
+        /// <summary>
+        /// IMPORTANT: THIS CALLS SpotifyCLI.HandlePendingComponentInput() TO REDUCE INPUT LAG
+        /// </summary>
         public static string GetPlaybackDetails()
         {
             if (SpotifyCLI.FRONTEND_ONLY) return "Read.GetPlaybackDetails() with frontend only is enabled";
@@ -97,7 +112,9 @@ namespace spotify_cli_cs
                 string shuffleState = SharedElements.GetShuffleButton().GetAttribute("aria-checked").ToLower() == "true" ? "on" : "off";
                 string repeatState = "";
 
-                switch(SharedElements.GetRepeatButton().GetAttribute("aria-checked"))
+    SpotifyCLI.HandlePendingComponentInput();
+
+                switch (SharedElements.GetRepeatButton().GetAttribute("aria-checked"))
                 {
                     case "mixed":
                         repeatState = "song";
@@ -119,7 +136,7 @@ namespace spotify_cli_cs
                 return "Loading...";
             }
         }
-        
+
         public static float GetNormalizedSongProgress()
         {
             if (SpotifyCLI.FRONTEND_ONLY) return .5f;
