@@ -27,36 +27,57 @@ namespace spotify_cli_cs.Components
 
             else if (key == ConsoleKey.PageUp)
             {
-                currentScrollValue -= 10;
+                // currentScrollValue -= 10;
+                for (int i = 0; i < 10; i++)
+                {
+                    currentScrollValue--;
+                    Thread.Sleep(1);
+                    this.UpdateLabel();
+                }
             }
 
             else if (key == ConsoleKey.PageDown)
             {
-                currentScrollValue += 10;
+                //currentScrollValue += 10;
+                for (int i = 0; i < 10; i++)
+                {
+                    currentScrollValue++;
+                    Thread.Sleep(1);
+                    this.UpdateLabel();
+                }
             }
 
             else if (key == ConsoleKey.Enter)
             {
                 Modify.GoToItemWithUri(libData![(CustomModulus(currentScrollValue, libData.Count))].Key, SpotifyCLI.driver!);
-                return;
-                Thread.Sleep(500);
+                // return;
+                Thread.Sleep(200);
 
-                SpotifyCLI.driver!.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']")).SendKeys(OpenQA.Selenium.Keys.PageDown);
-                
-                List<TracklistItem> tracklistData = new();
-                foreach (var s in SharedElements.CurrentTracklistSongChunk())
+                for (int i = 0; i < 5; i++)
                 {
-                    var titleElement = s.FindElements(By.XPath(".//a[@data-testid='internal-track-link']"))[0];
-                    var albumElement = s.FindElements(By.XPath(".//a[@class='standalone-ellipsis-one-line'][@draggable='true']"))[0];
-
-                    tracklistData.Add(new TracklistItem() 
+                    try
                     {
-                        name = titleElement.Text,
-                        album = albumElement.Text,
-                    });
-                }
+                        SpotifyCLI.driver!.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']")).SendKeys(OpenQA.Selenium.Keys.PageDown);
 
-                SpotifyCLI.UpdateAndOpenTracklistView(tracklistData);
+                        List<TracklistItem> tracklistData = new();
+                        foreach (var s in SharedElements.CurrentTracklistSongChunk())
+                        {
+                            var titleElement = s.FindElements(By.XPath(".//a[@data-testid='internal-track-link']"))[0];
+                            var albumElement = s.FindElements(By.XPath(".//a[@class='standalone-ellipsis-one-line'][@draggable='true']"))[0];
+
+                            tracklistData.Add(new TracklistItem()
+                            {
+                                name = titleElement.Text,
+                                album = albumElement.Text,
+                            });
+                        }
+
+                        SpotifyCLI.UpdateAndOpenTracklistView(tracklistData);
+
+                        break;
+
+                    } catch (Exception) { Thread.Sleep(100); continue;  }
+                }
             }
 
             else return;
