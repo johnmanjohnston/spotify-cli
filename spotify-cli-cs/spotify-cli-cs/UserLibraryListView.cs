@@ -25,6 +25,16 @@ namespace spotify_cli_cs.Components
                 currentScrollValue++;
             }
 
+            else if (key == ConsoleKey.PageUp)
+            {
+                currentScrollValue -= 10;
+            }
+
+            else if (key == ConsoleKey.PageDown)
+            {
+                currentScrollValue += 10;
+            }
+
             else if (key == ConsoleKey.Enter)
             {
                 Modify.GoToItemWithUri(libData![(CustomModulus(currentScrollValue, libData.Count))].Key, SpotifyCLI.driver!);
