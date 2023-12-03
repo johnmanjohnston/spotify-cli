@@ -374,7 +374,7 @@ HandlePendingComponentInput();
         Console.SetCursorPosition(BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(ANSI_GRAY + Read.GetPlaybackTimeInfo() + ANSI_RESET);
 
-HandlePendingComponentInput();
+// HandlePendingComponentInput(); // causes cursor conflicts
 
         // clean up any text drawn in the wrong spot due to cursor conflicts
         Console.SetCursorPosition(0, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM);

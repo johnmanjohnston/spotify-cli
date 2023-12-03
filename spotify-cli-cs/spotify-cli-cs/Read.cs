@@ -47,7 +47,7 @@ namespace spotify_cli_cs
                 string pos = SharedElements.GetPlaybackPositionDiv().Text;
                 string duration = SharedElements.GetPlaybackDurationDiv().Text.TrimStart('-');
 
-    SpotifyCLI.HandlePendingComponentInput();
+    // SpotifyCLI.HandlePendingComponentInput(); // causes cursor conflicts
 
                 string retval = $"{pos} / {duration}";
 
