@@ -39,6 +39,11 @@ namespace spotify_cli_cs
             catch (StaleElementReferenceException) { }
         }
 
+        public static void ToggleMute()
+        {
+            SharedElements.GetMuteButton().Click();
+        }
+
         public static void ChangeRepeatMode()
         {
             SharedElements.GetRepeatButton().Click();

@@ -28,9 +28,9 @@ namespace spotify_cli_cs.Components
             else if (key == ConsoleKey.PageUp)
             {
                 // currentScrollValue -= 10;
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    currentScrollValue--;
+                    currentScrollValue -= 2;
                     Thread.Sleep(1);
                     this.UpdateLabel();
                 }
@@ -39,9 +39,9 @@ namespace spotify_cli_cs.Components
             else if (key == ConsoleKey.PageDown)
             {
                 //currentScrollValue += 10;
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    currentScrollValue++;
+                    currentScrollValue += 2;
                     Thread.Sleep(1);
                     this.UpdateLabel();
                 }
@@ -51,19 +51,24 @@ namespace spotify_cli_cs.Components
             {
                 Modify.GoToItemWithUri(libData![(CustomModulus(currentScrollValue, libData.Count))].Key, SpotifyCLI.driver!);
                 // return;
-                Thread.Sleep(200);
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 35; i++)
                 {
                     try
                     {
-                        SpotifyCLI.driver!.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']")).SendKeys(OpenQA.Selenium.Keys.PageDown);
+                        // SpotifyCLI.driver!.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']")).SendKeys(OpenQA.Selenium.Keys.PageDown);
 
                         List<TracklistItem> tracklistData = new();
-                        foreach (var s in SharedElements.CurrentTracklistSongChunk())
+                        List<IWebElement> list = SharedElements.CurrentTracklistSongChunk();
+
+                        for (int i1 = 0; i1 < list.Count; i1++)
                         {
+                            IWebElement? s = list[i1];
                             var titleElement = s.FindElements(By.XPath(".//a[@data-testid='internal-track-link']"))[0];
                             var albumElement = s.FindElements(By.XPath(".//a[@class='standalone-ellipsis-one-line'][@draggable='true']"))[0];
+
+                            Console.SetCursorPosition(2, i1 + 4);
+                            Console.WriteLine(titleElement.Text);
 
                             tracklistData.Add(new TracklistItem()
                             {
@@ -76,7 +81,7 @@ namespace spotify_cli_cs.Components
 
                         break;
 
-                    } catch (Exception) { Thread.Sleep(100); continue;  }
+                    } catch (Exception) { Thread.Sleep(10); continue;  }
                 }
             }
 

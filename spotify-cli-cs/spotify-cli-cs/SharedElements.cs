@@ -20,6 +20,7 @@ namespace spotify_cli_cs
         public static IWebElement GetPlaybackPositionDiv() => driver!.FindElement(By.XPath("//div[@data-testid='playback-position']"));
         public static IWebElement GetPlaybackDurationDiv() => driver!.FindElement(By.XPath("//div[@data-testid='playback-duration']"));
         public static IWebElement GetNextSongLink() => driver!.FindElements(By.XPath("//a[@data-testid='context-item-link']"))[2];
+        public static IWebElement GetMuteButton() => driver!.FindElement(By.XPath("//button[@data-testid='volume-bar-toggle-mute-button']"));
 
         // public static IWebElement GetNextSongArtistLink() => driver!.FindElements(By.XPath("//a[@data-testid='context-item-info-artist']"))[2];
         
@@ -41,11 +42,11 @@ namespace spotify_cli_cs
         {
             // TO DO: REMOVE THE NEDDLESS CONVERSION OF LIST -> ARRAY -> LIST
 
-            int maxElementsInChunk = 5;
-            IWebElement[] tracklistRows = CurrentContextTracklist().FindElements(By.XPath(".//div[@data-testid='tracklist-row']")).ToArray();
-            IWebElement[] retval = new IWebElement[maxElementsInChunk];
-            Array.Copy(tracklistRows, retval, maxElementsInChunk);
-            return retval.ToList();
+            int maxElementsInChunk = 10;
+            return CurrentContextTracklist()
+            .FindElements(By.XPath(".//div[@data-testid='tracklist-row']"))
+            .Take(maxElementsInChunk)
+            .ToList();
         }
     }
 }

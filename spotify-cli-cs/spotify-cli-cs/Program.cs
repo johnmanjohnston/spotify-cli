@@ -104,13 +104,15 @@ class SpotifyCLI
 
             for (int i = 0; i < 3; i++)
             {
+                DisplaySplashScreenLoadingMessage("Attemping to authenticate with the Spotify API...");
+
                 try
                 {
                     spotify = new(GetAccessToken());
                     var t = spotify?.UserProfile.Current().Result.Uri;
                     break;
                 }
-                catch { Thread.Sleep(500); DisplaySplashScreenLoadingMessage("Auth failed.");  continue; }
+                catch { Thread.Sleep(700); DisplaySplashScreenLoadingMessage("Auth failed.");  continue; }
             }
             
             Thread.Sleep(2000);
@@ -192,6 +194,7 @@ class SpotifyCLI
             else if (keyData.Key == ConsoleKey.F) { Modify.ToggleHeart(); }
             else if (keyData.Key == ConsoleKey.S) { Modify.ChangeShuffleMode(); }
             else if (keyData.Key == ConsoleKey.R) { Modify.ChangeRepeatMode(); }
+            else if (keyData.Key == ConsoleKey.M) { Modify.ToggleMute(); }
 
             else if (keyData.Key == ConsoleKey.P) { Console.Clear(); }
             else if (keyData.Key == ConsoleKey.O) { Console.CursorVisible = false; }
@@ -634,7 +637,7 @@ HandlePendingComponentInput();
             // start from coordinates (2, 5)
 
             components.Remove(userLibListView!);
-            FOCUSED = null;
+            FOCUSED = playlistView;
 
             for (int i = 0; i < Console.WindowHeight - 12; i++)
             {
