@@ -8,6 +8,9 @@
 
         public int xPos;
         public int yPos;
+
+        public bool BLOCK_INPUT_FROM_OTHER_FUNCTIONALITY; // idfk what to call this, man
+
         public TUIBaseComponent(int x, int y) 
         {
             this.xPos = x;

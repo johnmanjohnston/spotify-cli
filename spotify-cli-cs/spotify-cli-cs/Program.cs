@@ -3,9 +3,6 @@ using spotify_cli_cs.Components;
 using spotify_cli_cs.Utility;
 using OpenQA.Selenium.Chrome;
 using SpotifyAPI.Web;
-using OpenQA.Selenium.DevTools.V116.Debugger;
-using System.Runtime.CompilerServices;
-using System.ComponentModel.Design;
 using spotify_cli_cs.Models;
 
 // Initialize 
@@ -172,39 +169,46 @@ class SpotifyCLI
                 // FOCUSED.HandleKeyInput(keyData.Key);
             }
 
-            if (keyData.Key == ConsoleKey.Spacebar) { 
-                Modify.TogglePlayPause(); 
+            if (FOCUSED!.BLOCK_INPUT_FROM_OTHER_FUNCTIONALITY == false)
+            {
+                if (keyData.Key == ConsoleKey.Spacebar)
+                {
+                    Modify.TogglePlayPause();
+                }
+
+                else if (keyData.Key == ConsoleKey.RightArrow) { Modify.SkipForward(); }
+                else if (keyData.Key == ConsoleKey.LeftArrow) { Modify.SkipBack(); }
+                else if (keyData.Key == ConsoleKey.F) { Modify.ToggleHeart(); }
+                else if (keyData.Key == ConsoleKey.S) { Modify.ChangeShuffleMode(); }
+                else if (keyData.Key == ConsoleKey.R) { Modify.ChangeRepeatMode(); }
+                else if (keyData.Key == ConsoleKey.M) { Modify.ToggleMute(); }
+
+                else if (keyData.Key == ConsoleKey.P) { Console.Clear(); }
+                else if (keyData.Key == ConsoleKey.O) { Console.CursorVisible = false; }
+
             }
 
-            // handle tab switching
+            // this functionality is more important, so ignore any
+            // instructions to block the orginal functionality
+            if (keyData.Key == ConsoleKey.Escape)
+            {
+                // Exit and clean up
+                if (!FRONTEND_ONLY) { driver!.Close(); }
+
+                Console.Clear();
+                Environment.Exit(0);
+            }
+
             else if (keyData.Key == ConsoleKey.OemPeriod) { tabState = (Tab)((int)((tabState) + 1) % 3); PENDING_UPDATE_TAB_CONTENT = true; }
             else if (keyData.Key == ConsoleKey.OemComma) { tabState = (Tab)(((int)((tabState) - 1) + 3) % 3); PENDING_UPDATE_TAB_CONTENT = true; }
 
-            else if (keyData.Key == ConsoleKey.Tab) 
+            else if (keyData.Key == ConsoleKey.Tab)
             {
                 focusIndex++;
                 focusIndex %= components.Count;
                 FOCUSED!.OnBlur();
                 FOCUSED = components[focusIndex];
                 FOCUSED.OnFocus();
-            }
-
-            else if (keyData.Key == ConsoleKey.RightArrow) { Modify.SkipForward(); }
-            else if (keyData.Key == ConsoleKey.LeftArrow) { Modify.SkipBack(); }
-            else if (keyData.Key == ConsoleKey.F) { Modify.ToggleHeart(); }
-            else if (keyData.Key == ConsoleKey.S) { Modify.ChangeShuffleMode(); }
-            else if (keyData.Key == ConsoleKey.R) { Modify.ChangeRepeatMode(); }
-            else if (keyData.Key == ConsoleKey.M) { Modify.ToggleMute(); }
-
-            else if (keyData.Key == ConsoleKey.P) { Console.Clear(); }
-            else if (keyData.Key == ConsoleKey.O) { Console.CursorVisible = false; }
-
-            else if (keyData.Key == ConsoleKey.Escape)
-            {
-                if (!FRONTEND_ONLY) { driver!.Close(); }
-
-                Console.Clear();
-                Environment.Exit(0);
             }
         }
     }
@@ -236,6 +240,8 @@ class SpotifyCLI
     // component data
     private static AddToPlaylistListView? playlistView;
     private static UserLibraryListView? userLibListView;
+    private static TextInputField searchInputField;
+
     private static TUIBaseComponent? FOCUSED;
     private static bool PENDING_UPDATE_TAB_CONTENT = false;
 
@@ -259,6 +265,7 @@ class SpotifyCLI
 
         playlistView = new();
         userLibListView = new();
+        searchInputField = new() { BLOCK_INPUT_FROM_OTHER_FUNCTIONALITY = true };
 
         FOCUSED = userLibListView; // by default
         FOCUSED.OnFocus();
@@ -467,7 +474,7 @@ HandlePendingComponentInput();
     private static void OnResizeTerminal()
     {
         if (tickCount < 2 && !FRONTEND_ONLY) {
-            Modify.TogglePlayPause(); 
+            // Modify.TogglePlayPause(); 
 
             SharedElements.GetNowPlayingViewButton().Click();
         }
@@ -654,13 +661,27 @@ HandlePendingComponentInput();
                 Console.Write(tracklist[i].name + " on " + tracklist[i].album);
             }
         }
+
+        else if (tabState == Tab.Search) 
+        {
+            components.Remove(userLibListView!);
+            FOCUSED = searchInputField;
+
+            for (int i = 0; i < Console.WindowHeight - 12; i++)
+            {
+                Console.SetCursorPosition(2, 3 + i);
+                Console.Write(new string(' ', Console.WindowWidth - 1));
+            }
+
+            Console.SetCursorPosition(2, 5);
+            Console.Write("Search: ");
+        }
     }
 
     public static void UpdateAndOpenTracklistView(List<TracklistItem> newData)
     {
         tracklist = newData;
-        tabState = Tab.Tracklist
-            ;
+        tabState = Tab.Tracklist;
         PENDING_UPDATE_TAB_CONTENT = true;
 
         components.Remove(userLibListView);
