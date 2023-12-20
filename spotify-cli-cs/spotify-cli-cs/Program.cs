@@ -240,7 +240,7 @@ class SpotifyCLI
     // component data
     private static AddToPlaylistListView? playlistView;
     private static UserLibraryListView? userLibListView;
-    private static TextInputField searchInputField;
+    private static TextInputField? searchInputField;
 
     private static TUIBaseComponent? FOCUSED;
     private static bool PENDING_UPDATE_TAB_CONTENT = false;
@@ -262,10 +262,9 @@ class SpotifyCLI
         userUri = spotify?.UserProfile.Current().Result.Uri;
         userPlaylists = Read.GetUserPlaylists();
         allUserSavedPlaylists = Read.GetUserPlaylists(false);
-
         playlistView = new();
         userLibListView = new();
-        searchInputField = new() { BLOCK_INPUT_FROM_OTHER_FUNCTIONALITY = true };
+        searchInputField = new() { BLOCK_INPUT_FROM_OTHER_FUNCTIONALITY = true, xPos = 2, yPos = 5 };
 
         FOCUSED = userLibListView; // by default
         FOCUSED.OnFocus();
