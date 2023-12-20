@@ -240,7 +240,7 @@ class SpotifyCLI
     // component data
     private static AddToPlaylistListView? playlistView;
     private static UserLibraryListView? userLibListView;
-    private static TextInputField? searchInputField;
+    private static SpotifySearchInputField? searchInputField;
 
     private static TUIBaseComponent? FOCUSED;
     private static bool PENDING_UPDATE_TAB_CONTENT = false;

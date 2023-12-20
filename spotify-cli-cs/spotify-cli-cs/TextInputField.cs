@@ -21,7 +21,7 @@ namespace spotify_cli_cs.Components
             // misc
             if (key == ConsoleKey.Backspace)
             {
-                if (content!.Length > 0)
+                if (content!.Length > 0) // only trim the ending if the length if sufficient, otherwise you'll get an exception
                     content = content[..^1];
             }
 
@@ -30,7 +30,17 @@ namespace spotify_cli_cs.Components
                 content += " ";
             }
 
+            else if (key == ConsoleKey.Enter)
+            {
+                this.OnEnter();
+            }
+
             this.UpdateLabel();
+        }
+
+        public virtual void OnEnter()
+        {
+            System.Diagnostics.Debug.WriteLine("OnEnter() called on an instance of TextInputField");
         }
 
         public void UpdateLabel()
