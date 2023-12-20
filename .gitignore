@@ -5,3 +5,6 @@ cover.png
 textual-test.py
 log.txt 
 frontendlog.txt
+.vs/
+obj/
+bin/
