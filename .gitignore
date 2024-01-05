@@ -8,3 +8,5 @@ frontendlog.txt
 .vs/
 obj/
 bin/
+access_token
+.cache
