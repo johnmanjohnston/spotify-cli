@@ -354,6 +354,12 @@ HandlePendingComponentInput();
     }
     */
 
+    private static void RedrawSavedStatusForCurrentSong() 
+    {
+        Console.SetCursorPosition(Read.GetCurrentlyPlaying((((Console.WindowWidth / 3) - (BOTTOM_BAR_MARGIN_LEFT + 6)) / 2) - 1).Length + 4, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
+        Console.Write(Read.GetSavedStatusForCurrentSong());
+    }
+
     private static void RedrawCurrentlyPlaying()
     {
         // ClearRow(Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
@@ -470,7 +476,11 @@ HandlePendingComponentInput();
     HandlePendingComponentInput(); UpdateTabOverheadPanel();
 
         DrawNextSongDetails();
-    
+
+    HandlePendingComponentInput();
+
+        RedrawSavedStatusForCurrentSong();
+
     HandlePendingComponentInput();
 
         // if there's a change in the width/height we think it is,
@@ -492,11 +502,13 @@ HandlePendingComponentInput();
 
     private static void OnResizeTerminal()
     {
+        /*
         if (tickCount < 2 && !FRONTEND_ONLY) {
             // Modify.TogglePlayPause(); 
 
             SharedElements.GetNowPlayingViewButton().Click();
         }
+        */
 
         // redraw everything
         RedrawCurrentlyPlaying();

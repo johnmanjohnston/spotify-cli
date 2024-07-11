@@ -1,10 +1,6 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.DevTools.V116.Debugger;
 using spotify_cli_cs.Utility;
 using SpotifyAPI.Web;
-using Swan;
-using System;
-using System.Runtime.CompilerServices;
 
 namespace spotify_cli_cs 
 {
@@ -15,6 +11,7 @@ namespace spotify_cli_cs
             System.Diagnostics.Debug.WriteLine(s);
         }
 
+        /*
         public static char GetHeartedStatus() 
         {
             if (SpotifyCLI.FRONTEND_ONLY) return '!';
@@ -27,6 +24,33 @@ namespace spotify_cli_cs
                 bool isHearted = SharedElements.GetHeartButton().GetAttribute("aria-checked").ToLower() == "true";
 
                 return isHearted ? HEARTED : UNHEARTED;
+            }
+
+            catch
+            {
+                return '-';
+            }
+        }
+        */
+
+        public static char GetSavedStatusForCurrentSong() 
+        {
+            if (SpotifyCLI.FRONTEND_ONLY) { return '!'; }
+
+            char SAVED = '♥';
+            char UNSAVED = '♡';
+
+            try 
+            {
+                IWebElement? btn = SharedElements.GetSaveButtonForCurrentSong();
+
+                if (btn != null) 
+                {
+                    bool isSaved = btn.GetAttribute("aria-checked").ToLower() == "true";
+                    return isSaved ? SAVED : UNSAVED;
+                }
+
+                return UNSAVED;
             }
 
             catch
@@ -295,7 +319,7 @@ namespace spotify_cli_cs
         // https://stackoverflow.com/questions/28059655/floored-integer-division
         private static int Floor(int a, int b)
         {
-            return (a / b - Convert.ToInt32(((a < 0) ^ (b < 0)) && (a % b != 0)));
+            return (a / b - Convert.ToInt32(((a < 0) ^ (b < 0)) && (a % b != 0))); // i'm john, revisiting this project after a couple months--what the actual fuck is happening here :skull:
         }
     }
 }

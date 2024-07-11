@@ -4,6 +4,11 @@ namespace spotify_cli_cs.Utility
 {
     public static class StaticUtilities 
     {
+        public static void DBG(string s)
+        {
+            System.Diagnostics.Debug.WriteLine(s);
+        }
+
         public static void ClearRow(int row, int offset = 0, int? charsToReplace = null)
         {
             charsToReplace ??= Console.WindowWidth;
