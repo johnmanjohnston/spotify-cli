@@ -2,6 +2,7 @@
 using spotify_cli_cs.Components;
 using spotify_cli_cs.Utility;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
 using SpotifyAPI.Web;
 using spotify_cli_cs.Models;
 
@@ -13,7 +14,7 @@ class SpotifyCLI
 {
     // shared
     public static SpotifyClient? spotify;
-    public static ChromeDriver? driver;
+    public static EdgeDriver driver;
 
     // other
     private static string SHELL_EXECUTABLE = "powershell.exe";
@@ -99,7 +100,7 @@ class SpotifyCLI
             DisplaySplashScreenLoadingMessage("Preparing Spotify authentication");
             WriteAccessToken();
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 5; i++)
             {
                 DisplaySplashScreenLoadingMessage("Attemping to authenticate with the Spotify API...");
 
@@ -107,28 +108,49 @@ class SpotifyCLI
                 {
                     spotify = new(GetAccessToken());
                     var t = spotify?.UserProfile.Current().Result.Uri;
+
+                    DisplaySplashScreenLoadingMessage("Auth successful");
                     break;
                 }
-                catch { Thread.Sleep(700); DisplaySplashScreenLoadingMessage("Auth failed.");  continue; }
+                catch { Thread.Sleep(1000); DisplaySplashScreenLoadingMessage("Auth failed.");  continue; }
             }
             
             Thread.Sleep(2000);
 
-            // initialize webdriver
-            DisplaySplashScreenLoadingMessage("Preparing driver");
-            ChromeOptions options = new();
-            options.AddArgument("user-data-dir=C:\\Users\\USER\\AppData\\Local\\Google\\Chrome\\User Data");
-            options.AddArgument("profile-directory=Default");
+            var useEdge = true;
 
-            // ChromeDriverService service = ChromeDriverService.CreateDefaultService();
-            // service.HideCommandPromptWindow = true; // hide all logs from the driver
+            if (!useEdge)
+            {
+                // initialize webdriver
+                DisplaySplashScreenLoadingMessage("Preparing driver");
+                ChromeOptions options = new();
+                options.AddArgument("user-data-dir=C:\\Users\\USER\\AppData\\Local\\Google\\Chrome\\User Data");
+                options.AddArgument("profile-directory=Default");
 
-            // driver = new ChromeDriver(service, options);
-            driver = new ChromeDriver(options); // InvalidOperationException if Chrome already opened
+                // ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+                // service.HideCommandPromptWindow = true; // hide all logs from the driver
 
-            DisplaySplashScreenLoadingMessage("Assigning helper class variables");
-            // configure other classes
-            SharedElements.driver = driver;
+                // driver = new ChromeDriver(service, options);
+               // driver = new ChromeDriver(options); // InvalidOperationException if Chrome already opened
+
+                DisplaySplashScreenLoadingMessage("Assigning helper class variables");
+                // configure other classes
+               // SharedElements.driver = driver;
+            }
+
+            else 
+            {
+                // C:\Users\USER\AppData\Local\Microsoft\Edge\User Data\Default
+                EdgeOptions options = new();
+                EdgeDriverService service = EdgeDriverService.CreateDefaultService();
+                service.HideCommandPromptWindow = true;
+
+                options.AddArgument("user-data-dir=C:\\Users\\USER\\AppData\\Local\\Microsoft\\Edge\\User Data");
+                options.AddArgument("profile-directory=Default");
+
+                driver = new EdgeDriver(service, options);
+                SharedElements.driver = driver;
+            }
 
             DisplaySplashScreenLoadingMessage("Opening Spotify");
             // initialization is complete; open Spotify

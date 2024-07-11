@@ -1,12 +1,11 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.DevTools.V116.Page;
+using OpenQA.Selenium.Edge;
 
 namespace spotify_cli_cs
 {
     static class SharedElements
     {
-        public static ChromeDriver? driver;
+        public static EdgeDriver? driver;
 
         public static IWebElement GetPlayPauseButton() => driver!.FindElement(By.XPath("//button[@data-testid='control-button-playpause']"));
         public static IWebElement GetSongNameLink() => driver!.FindElement(By.XPath("//a[@data-testid='context-item-link']"));

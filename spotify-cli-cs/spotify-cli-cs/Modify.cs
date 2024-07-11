@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
 
 namespace spotify_cli_cs
 {
@@ -54,7 +55,7 @@ namespace spotify_cli_cs
             SharedElements.GetShuffleButton().Click();
         }
 
-        public static void GoToItemWithUri(string uri, ChromeDriver driver)
+        public static void GoToItemWithUri(string uri, EdgeDriver driver)
         {
             // get search btn
             var searchBtn = driver.FindElement(By.XPath("//a[@href='/search']"));
