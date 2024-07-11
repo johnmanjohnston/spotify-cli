@@ -339,9 +339,10 @@ class SpotifyCLI
         return retval;
     }
 
-    // Redraw the heart SEPERATELY from the current playback label.
-    // We do this so that we don't have to redraw the entire label
-    // just to update one heart.
+    // Showing which songs were hearted was actually one feature
+    // from Spotify which I ACTUALLY FUCKING LIKED. Thanks for 
+    // removing it and not giving the option to revert, Spotify!
+    /*
     private static void RedrawHeartedStatus() 
     {
         if (string.IsNullOrEmpty(currentPlaybackLabel)) return;
@@ -351,6 +352,7 @@ HandlePendingComponentInput();
         Console.SetCursorPosition(Read.GetCurrentlyPlaying((((Console.WindowWidth / 3) - (BOTTOM_BAR_MARGIN_LEFT + 6)) / 2) - 1).Length + 4, Console.WindowHeight - 3 - BOTTOM_BAR_MARGIN_BOTTOM);
         Console.Write(Read.GetHeartedStatus());
     }
+    */
 
     private static void RedrawCurrentlyPlaying()
     {
@@ -464,10 +466,6 @@ HandlePendingComponentInput();
         {
             RedrawPlaybackDetails();
         }
-
-    HandlePendingComponentInput();
-
-        RedrawHeartedStatus(); // redraw hearted status AFTER RedrawCurrentlyPlaying()
 
     HandlePendingComponentInput(); UpdateTabOverheadPanel();
 
@@ -587,7 +585,7 @@ HandlePendingComponentInput();
         if (data != nextSongLabel && data != null)
         {
             Console.SetCursorPosition((Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2);
-            StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2, (Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT, (Console.WindowWidth / 3) - 1);
+            StaticUtilities.ClearRow(Console.WindowHeight - BOTTOM_BAR_MARGIN_BOTTOM - 2, (Console.WindowWidth / 3) + BOTTOM_BAR_MARGIN_LEFT - 1, (Console.WindowWidth / 3) - 2);
 
 HandlePendingComponentInput();
 
