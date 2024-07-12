@@ -257,6 +257,7 @@ class SpotifyCLI
     // Spotify data
     public static List<KeyValuePair<string, string>> userPlaylists = new(); // in the format <uri, name> ONLY WHICH ONES USER OWNS
     public static List<KeyValuePair<string, string>> allUserSavedPlaylists = new(); // in the format <uri, name>
+    public static List<KeyValuePair<string, string>> allUserSavedAlbums = new(); // in the format <uri, name>
     public static string? userUri;
 
     // component data
@@ -283,6 +284,7 @@ class SpotifyCLI
     {
         userUri = spotify?.UserProfile.Current().Result.Uri;
         userPlaylists = Read.GetUserPlaylists();
+        allUserSavedAlbums = Read.GetUserAlbums();
         allUserSavedPlaylists = Read.GetUserPlaylists(false);
         playlistView = new();
         userLibListView = new();
@@ -667,6 +669,12 @@ HandlePendingComponentInput();
                 userLibListView.libData.Add(new KeyValuePair<string, string>(playlist.Key, "🗀 - " + playlist.Value));
             }
 
+            foreach (var album in allUserSavedAlbums) 
+            {
+                userLibListView.libData.Add(new KeyValuePair<string, string>(album.Key, $"Album - {album.Value}"));
+            }
+
+            // TO DO: add saved albums
             if (redraw) userLibListView.UpdateLabel();
         }
 

@@ -217,6 +217,32 @@ namespace spotify_cli_cs
             return retval;           
         }
 
+        public static List<KeyValuePair<string, string>> GetUserAlbums() 
+        {
+            List<KeyValuePair<string, string>> retval = new();
+
+            if (!SpotifyCLI.FRONTEND_ONLY)
+            {
+                SpotifyClient spotify = SpotifyCLI.spotify!;
+                var savedAlbums = spotify!.Library.GetAlbums().Result.Items;
+
+                for (int i = 0; i < savedAlbums!.Count; i++) 
+                {
+                    retval.Add(new KeyValuePair<string, string>(savedAlbums[i].Album.Uri, savedAlbums[i].Album.Name));
+                }
+            }
+
+            else
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    retval.Add(new KeyValuePair<string, string>($"uri{i}", $"album {i}"));
+                }
+            }
+
+            return retval;
+        }
+
         private static string GetPlaylistIDFromURI(string uri)
         {
             string retval = "";
