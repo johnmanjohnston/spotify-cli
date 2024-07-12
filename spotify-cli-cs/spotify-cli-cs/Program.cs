@@ -191,7 +191,7 @@ class SpotifyCLI
                 // FOCUSED.HandleKeyInput(keyData.Key);
             }
 
-            if (FOCUSED!.BLOCK_INPUT_FROM_OTHER_FUNCTIONALITY == false)
+            if (FOCUSED!.BLOCK_INPUT_FROM_OTHER_FUNCTIONALITY == false && FOCUSED != null)
             {
                 if (keyData.Key == ConsoleKey.Spacebar)
                 {
