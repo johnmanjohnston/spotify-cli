@@ -1,8 +1,6 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.DevTools.V116.Storage;
 using spotify_cli_cs.Models;
 using spotify_cli_cs.Utility;
-using System.Linq;
 
 namespace spotify_cli_cs.Components
 {
@@ -119,7 +117,7 @@ namespace spotify_cli_cs.Components
 
         private static int CustomModulus(int x, int m)
         {
-            return (x % m + m) % m;
+            return (x % m + m) % m; // what the fuck
         }
     }
 }

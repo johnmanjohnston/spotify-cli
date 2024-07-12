@@ -62,7 +62,7 @@ namespace spotify_cli_cs
         {
             // TO DO: REMOVE THE NEDDLESS CONVERSION OF LIST -> ARRAY -> LIST
 
-            int maxElementsInChunk = 10;
+            int maxElementsInChunk = 16; // TO DO: change this depending on window dimensions
             return CurrentContextTracklist()
             .FindElements(By.XPath(".//div[@data-testid='tracklist-row']"))
             .Take(maxElementsInChunk)

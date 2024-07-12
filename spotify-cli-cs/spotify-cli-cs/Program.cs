@@ -672,8 +672,6 @@ HandlePendingComponentInput();
 
         else if (tabState == Tab.Tracklist)
         {
-            // start from coordinates (2, 5)
-
             components.Remove(userLibListView!);
             FOCUSED = playlistView;
 
@@ -683,12 +681,9 @@ HandlePendingComponentInput();
                 Console.Write(new string(' ', Console.WindowWidth - 1));
             }
 
-            Console.SetCursorPosition(2, 5);
-            Console.Write("THIS IS THE TRACKLIST TAB AHSDKFHJASKDFH");
-
             for (int i = 0; i < tracklist.Count; i++)
             {
-                Console.SetCursorPosition(2, 6 + i);
+                Console.SetCursorPosition(2, 4 + i);
                 Console.Write(tracklist[i].name + " on " + tracklist[i].album);
             }
         }
