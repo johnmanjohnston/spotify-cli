@@ -4,9 +4,8 @@ using SpotifyAPI.Web;
 
 namespace spotify_cli_cs.Components
 {
-    public class AddToPlaylistListView : TUIBaseComponent
+    public class AddToPlaylistListView : BaseScrollView
     {
-        private int currentScrollValue; // how far we have scrolled
         private List<KeyValuePair<string, string>> playlistData;
 
         public AddToPlaylistListView(int x = 0, int y = 0) : base(x, y)
@@ -24,17 +23,9 @@ namespace spotify_cli_cs.Components
 
         public override void HandleKeyInput(ConsoleKey key)
         {
-            if (key == ConsoleKey.UpArrow)
-            {
-                currentScrollValue--;
-            }
+            base.HandleKeyInput(key);
 
-            else if (key == ConsoleKey.DownArrow)
-            {
-                currentScrollValue++;
-            }
-
-            else if (key == ConsoleKey.Enter)
+            if (key == ConsoleKey.Enter)
             {
                 // add song to playlist
                 IPlayableItem curPlayingInfo = SpotifyCLI.spotify!.Player.GetCurrentlyPlaying(new PlayerCurrentlyPlayingRequest()).Result.Item;
@@ -109,7 +100,7 @@ namespace spotify_cli_cs.Components
             return retval;
         }
 
-        public void UpdateLabel() 
+        public override void UpdateLabel() 
         {
             // int orgX = Console.GetCursorPosition().Left;
             // int orgY = Console.GetCursorPosition().Top;

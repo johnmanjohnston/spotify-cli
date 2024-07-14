@@ -6,13 +6,13 @@ namespace spotify_cli_cs.Components
     public class TracklistListView : TUIBaseComponent
     {
         private int currentScrollValue; // how far we have scrolled
-        private List<KeyValuePair<string, string>> tracklistData;
+        private List<string> tracklistData; // list of song names. when user selects the song, just find the current scroll value, get the index from that, and play it on spotify
 
         public TracklistListView(int x = 0, int y = 0) : base(x, y) { }
 
         public override void HandleKeyInput(ConsoleKey key)
         {
-            if (key == ConsoleKey.UpArrow) 
+            if (key == ConsoleKey.UpArrow)
             {
                 currentScrollValue--;
             }
@@ -22,6 +22,10 @@ namespace spotify_cli_cs.Components
                 currentScrollValue++;
             }
 
+            else if (key == ConsoleKey.PageDown) 
+            {
+                
+            }
         }
 
         public override void OnBlur()
