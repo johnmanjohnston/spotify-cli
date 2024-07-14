@@ -20,6 +20,7 @@ namespace spotify_cli_cs
             {
                 this.currentScrollValue += 2;
                 Thread.Sleep(1);
+                this.UpdateLabel();
             }
         }
 
@@ -29,6 +30,7 @@ namespace spotify_cli_cs
             {
                 this.currentScrollValue -= 2;
                 Thread.Sleep(1);
+                this.UpdateLabel();
             }
         }
 
@@ -53,8 +55,6 @@ namespace spotify_cli_cs
             {
                 PageScrollDown();
             }
-
-            UpdateLabel();
         }
     }
 }

@@ -68,7 +68,7 @@ namespace spotify_cli_cs.Components
                 }
             }
 
-            else return; // don't continue any further if it's a keybind we aren't doing anything for
+           // else return; // don't continue any further if it's a keybind we aren't doing anything for
 
             
             /*

@@ -5,48 +5,17 @@ using static spotify_cli_cs.AdditionalData.AdditionalData;
 
 namespace spotify_cli_cs.Components
 {
-    public class UserLibraryListView : TUIBaseComponent
+    public class UserLibraryListView : BaseScrollView
     {
-        private int currentScrollValue; // how far we have scrolled
         public List<KeyValuePair<string, string>>? libData = new(); // format, <uri, name>
         public int entiresToDisplay; // assigned in Program.cs in OnTerminalResize()
         public UserLibraryListView(int x = 0, int y = 0) : base(x, y) { }
 
         public override void HandleKeyInput(ConsoleKey key)
         {
-            if (key == ConsoleKey.UpArrow)
-            {
-                currentScrollValue--;
-            }
+            base.HandleKeyInput(key);
 
-            else if (key == ConsoleKey.DownArrow)
-            {
-                currentScrollValue++;
-            }
-
-            else if (key == ConsoleKey.PageUp)
-            {
-                // currentScrollValue -= 10;
-                for (int i = 0; i < 5; i++)
-                {
-                    currentScrollValue -= 2;
-                    Thread.Sleep(1);
-                    this.UpdateLabel();
-                }
-            }
-
-            else if (key == ConsoleKey.PageDown)
-            {
-                //currentScrollValue += 10;
-                for (int i = 0; i < 5; i++)
-                {
-                    currentScrollValue += 2;
-                    Thread.Sleep(1);
-                    this.UpdateLabel();
-                }
-            }
-
-            else if (key == ConsoleKey.Enter)
+            if (key == ConsoleKey.Enter)
             {
                 Modify.GoToItemWithUri(libData![(CustomModulus(currentScrollValue, libData.Count))].Key, SpotifyCLI.driver!);
                 // return;
@@ -103,8 +72,6 @@ namespace spotify_cli_cs.Components
                 }
             }
 
-            else return;
-
             this.UpdateLabel();
         }
 
@@ -117,11 +84,11 @@ namespace spotify_cli_cs.Components
             // throw new NotImplementedException();
         }
 
-        public void UpdateLabel()
+        public override void UpdateLabel()
         {
             for (int i = 0 - (entiresToDisplay / 2); i < entiresToDisplay; i++)
             {
-                string val = libData[(CustomModulus(currentScrollValue + i, libData.Count))].Value;
+                string val = libData![(CustomModulus(currentScrollValue + i, libData.Count))].Value;
                 Console.SetCursorPosition(2, 5 + (entiresToDisplay / 2) + i);
                 StaticUtilities.ClearRow(5 + (entiresToDisplay / 2) + i);
                 
