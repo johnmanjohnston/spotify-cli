@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using spotify_cli_cs.Components.Core;
 
 namespace spotify_cli_cs.Components
 {

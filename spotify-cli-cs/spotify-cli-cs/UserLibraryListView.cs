@@ -1,6 +1,8 @@
 ﻿using OpenQA.Selenium;
 using spotify_cli_cs.Models;
 using spotify_cli_cs.Utility;
+using spotify_cli_cs.Components.Core;
+
 using static spotify_cli_cs.AdditionalData.AdditionalData;
 
 namespace spotify_cli_cs.Components

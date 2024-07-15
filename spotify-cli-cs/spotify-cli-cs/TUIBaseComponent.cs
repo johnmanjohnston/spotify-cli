@@ -1,4 +1,4 @@
-﻿namespace spotify_cli_cs.Components
+﻿namespace spotify_cli_cs.Components.Core
 {
     public abstract class TUIBaseComponent
     {

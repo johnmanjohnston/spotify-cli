@@ -1,5 +1,6 @@
 ﻿using spotify_cli_cs;
 using spotify_cli_cs.Components;
+using spotify_cli_cs.Components.Core;
 using spotify_cli_cs.Utility;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;

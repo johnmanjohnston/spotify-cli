@@ -1,5 +1,4 @@
-﻿using spotify_cli_cs.Utility;
-using SpotifyAPI.Web;
+﻿using spotify_cli_cs.Components.Core;
 
 namespace spotify_cli_cs.Components
 {

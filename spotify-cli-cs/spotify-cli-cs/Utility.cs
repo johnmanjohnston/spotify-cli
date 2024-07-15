@@ -1,7 +1,4 @@
-﻿using spotify_cli_cs.Components;
-using SpotifyAPI;
-
-namespace spotify_cli_cs.Utility
+﻿namespace spotify_cli_cs.Utility
 {
     public static class StaticUtilities 
     {
