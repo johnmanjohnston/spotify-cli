@@ -28,7 +28,7 @@ namespace spotify_cli_cs.Components
                 if (item.Key.Contains("album")) itemType = (int)DataMap.ALBUM;
                 if (item.Key.Contains("playlist")) itemType = (int)DataMap.PLAYLIST;
 
-                for (int i = 0; i < 35; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     try
                     {
@@ -37,20 +37,24 @@ namespace spotify_cli_cs.Components
                             List<TracklistItem> tracklistData = new();
                             List<IWebElement> list = SharedElements.CurrentTracklistSongChunk();
 
+                            Thread.Sleep(500);
+
                             for (int i1 = 0; i1 < list.Count; i1++)
                             {
                                 IWebElement? s = list[i1];
                                 var titleElement = s.FindElements(By.XPath(".//a[@data-testid='internal-track-link']"))[0];
                                 var albumElement = s.FindElements(By.XPath(".//a[@class='standalone-ellipsis-one-line'][@draggable='true']"))[0];
 
-                                Console.SetCursorPosition(2, i1 + 4);
-                                Console.WriteLine(titleElement.Text);
+                                //Console.SetCursorPosition(2, i1 + 4);
+                                //Console.WriteLine(titleElement.Text);
 
                                 tracklistData.Add(new TracklistItem()
                                 {
                                     name = titleElement.Text,
                                     album = albumElement.Text,
                                 });
+
+                                StaticUtilities.DBG(titleElement.Text);
                             }
 
                             SpotifyCLI.UpdateAndOpenTracklistView(tracklistData);

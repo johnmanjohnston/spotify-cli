@@ -265,6 +265,7 @@ class SpotifyCLI
     private static AddToPlaylistListView? playlistView;
     private static UserLibraryListView? userLibListView;
     private static SpotifySearchInputField? searchInputField;
+    private static TracklistListView? tracklistListView;
 
     private static TUIBaseComponent? FOCUSED;
     private static bool PENDING_UPDATE_TAB_CONTENT = false;
@@ -279,7 +280,7 @@ class SpotifyCLI
     };
 
     private static Tab tabState;
-    private static List<TracklistItem> tracklist;
+    //private static List<TracklistItem> tracklist;
 
     private static void Initialize()
     {
@@ -289,6 +290,7 @@ class SpotifyCLI
         allUserSavedPlaylists = Read.GetUserPlaylists(false);
         playlistView = new();
         userLibListView = new();
+        tracklistListView = new();
         searchInputField = new() { BLOCK_INPUT_FROM_OTHER_FUNCTIONALITY = true, xPos = 2, yPos = 5 };
 
         FOCUSED = userLibListView; // by default
@@ -299,6 +301,7 @@ class SpotifyCLI
 
         components.Add(userLibListView);
         components.Add(playlistView);
+        components.Add(tracklistListView);
     }
 
     public static void ClearRow(int row, int offset = 0, int? charsToReplace = null)
@@ -682,7 +685,8 @@ HandlePendingComponentInput();
         else if (tabState == Tab.Tracklist)
         {
             components.Remove(userLibListView!);
-            FOCUSED = playlistView;
+
+            FOCUSED = tracklistListView;
 
             for (int i = 0; i < Console.WindowHeight - 12; i++)
             {
@@ -690,11 +694,22 @@ HandlePendingComponentInput();
                 Console.Write(new string(' ', Console.WindowWidth - 1));
             }
 
+
+            for (var i = 0; i < 10; i++) 
+            {
+                tracklistListView!.trackNames!.Add($"test track name {i}");
+            }
+
+            tracklistListView!.UpdateLabel();
+
+            /*
+
             for (int i = 0; i < tracklist.Count; i++)
             {
                 Console.SetCursorPosition(2, 4 + i);
                 Console.Write(tracklist[i].name + " on " + tracklist[i].album);
             }
+            */
         }
 
         else if (tabState == Tab.Search) 
@@ -715,11 +730,13 @@ HandlePendingComponentInput();
 
     public static void UpdateAndOpenTracklistView(List<TracklistItem> newData)
     {
-        tracklist = newData;
+      //  tracklist = newData;
         tabState = Tab.Tracklist;
         PENDING_UPDATE_TAB_CONTENT = true;
 
         components.Remove(userLibListView);
-        FOCUSED = null;
+        FOCUSED = tracklistListView;
+
+        StaticUtilities.DBG("length of tracklist is " + newData.Count);
     }
 }
