@@ -64,10 +64,18 @@ namespace spotify_cli_cs
 
             // int maxElementsInChunk = 99; // TO DO: change this depending on window dimensions
 
+            /*
             return CurrentContextTracklist()
             .FindElements(By.XPath(".//div[@data-testid='tracklist-row']"))
            // .Take(maxElementsInChunk)
             .ToList();
+            */
+
+            Thread.Sleep(1500);
+
+            StaticUtilities.DBG(driver!.FindElements(By.XPath("//div[@data-testid='tracklist-row']")).Count.ToString());
+
+            return driver!.FindElements(By.XPath("//div[@data-testid='tracklist-row']")).ToList();
         }
     }
 }

@@ -253,6 +253,7 @@ namespace spotify_cli_cs
             return retval;
         }
 
+        // TODO: see if you can optimize this function
         public static bool SongInPlaylist(string songUri, string playlistId)
         {
             var playlist = SpotifyCLI.spotify?.Playlists.Get(playlistId).Result;
@@ -343,7 +344,7 @@ namespace spotify_cli_cs
         }
 
         // https://stackoverflow.com/questions/28059655/floored-integer-division
-        private static int Floor(int a, int b)
+        public static int Floor(int a, int b)
         {
             return (a / b - Convert.ToInt32(((a < 0) ^ (b < 0)) && (a % b != 0))); // i'm john, revisiting this project after a couple months--what the actual fuck is happening here :skull:
         }

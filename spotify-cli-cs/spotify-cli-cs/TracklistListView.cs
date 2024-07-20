@@ -40,7 +40,7 @@ namespace spotify_cli_cs.Components
 
                 else 
                 {
-                    Console.Write(val);
+                    Console.Write($"{(CustomModulus(currentScrollValue + i, trackNames.Count))}" + val);
                 }
             }
         }

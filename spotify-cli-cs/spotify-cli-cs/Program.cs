@@ -265,7 +265,7 @@ class SpotifyCLI
     private static AddToPlaylistListView? playlistView;
     private static UserLibraryListView? userLibListView;
     private static SpotifySearchInputField? searchInputField;
-    private static TracklistListView? tracklistListView;
+    public static TracklistListView? tracklistListView;
 
     private static TUIBaseComponent? FOCUSED;
     private static bool PENDING_UPDATE_TAB_CONTENT = false;
@@ -694,11 +694,12 @@ HandlePendingComponentInput();
                 Console.Write(new string(' ', Console.WindowWidth - 1));
             }
 
-
+            /*
             for (var i = 0; i < 10; i++) 
             {
                 tracklistListView!.trackNames!.Add($"test track name {i}");
             }
+            */
 
             tracklistListView!.UpdateLabel();
 
@@ -728,15 +729,23 @@ HandlePendingComponentInput();
         }
     }
 
-    public static void UpdateAndOpenTracklistView(List<TracklistItem> newData)
+    public static void UpdateAndOpenTracklistView(List<TracklistItem>? newData)
     {
-      //  tracklist = newData;
+        /*
+        StaticUtilities.DBG("length of tracklist is " + newData.Count);
+        for (int i = 0; i < newData.Count; i++) 
+        {
+            tracklistListView.trackNames.Add(newData[i].name);
+        }
+        */
+
+        //tracklist = newData;
         tabState = Tab.Tracklist;
         PENDING_UPDATE_TAB_CONTENT = true;
 
         components.Remove(userLibListView);
         FOCUSED = tracklistListView;
 
-        StaticUtilities.DBG("length of tracklist is " + newData.Count);
+
     }
 }
