@@ -1,12 +1,15 @@
 ﻿using spotify_cli_cs.Components.Core;
+using spotify_cli_cs.Models;
 using spotify_cli_cs.Utility;
 
 namespace spotify_cli_cs.Components
 {
     public class TracklistListView : BaseScrollView
     {
-        public List<string>? trackNames = new(); // assign names of track to display to the user--when a song is selected, look at the index of the selected track and find the corresponding song using selenium
+       // public List<string>? trackNames = new(); // assign names of track to display to the user--when a song is selected, look at the index of the selected track and find the corresponding song using selenium
         private int entriesToDisplay = 10;
+
+        public List<TracklistItem> tracklistData = new();
 
         public TracklistListView(int x = 0, int y = 0) : base(x, y) { }
 
@@ -29,19 +32,25 @@ namespace spotify_cli_cs.Components
         {
             for (int i = 0 - (entriesToDisplay / 2); i < entriesToDisplay; i++) 
             {
-                string val = trackNames![(CustomModulus(currentScrollValue + i, trackNames.Count))];
+                int trackIndex = (CustomModulus(currentScrollValue + i, tracklistData.Count));
+
+                TracklistItem val = tracklistData![trackIndex];
+
+                string name = val.name!;
+                string album = val.album!;
+                string artists = val.artists!;
 
                 Console.SetCursorPosition(2, 5 + (entriesToDisplay / 2) + i);
                 StaticUtilities.ClearRow(5 + (entriesToDisplay / 2) + i);
 
                 if (i == 0)
                 {
-                    Console.Write(SpotifyCLI.ANSI_GRAY + $"({1 + (CustomModulus(currentScrollValue + i, trackNames.Count))}) " + val + SpotifyCLI.ANSI_RESET);
+                    Console.Write($"{1 + trackIndex}\t{name} by {artists} on {album}");
                 }
 
                 else 
                 {
-                    Console.Write(val);
+                    Console.Write(SpotifyCLI.ANSI_GRAY + "\t" + name + SpotifyCLI.ANSI_RESET);
                 }
             }
         }

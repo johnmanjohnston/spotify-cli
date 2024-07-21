@@ -30,14 +30,14 @@ namespace spotify_cli_cs.Components
                 if (item.Key.Contains("playlist")) itemType = (int)DataMap.PLAYLIST;
                 if (itemType == (int)DataMap.PLAYLIST)
                 {
-                    SpotifyCLI.tracklistListView!.trackNames!.Clear();
+                    SpotifyCLI.tracklistListView!.tracklistData!.Clear();
 
                     var playlistID = item.Key.Split(":")[2];
                     var playlist = SpotifyCLI.spotify?.Playlists.Get(playlistID).Result;
                     int numSongs = (int)playlist!.Tracks!.Total!;
                     int chunks = Read.Floor(numSongs, 100);
 
-                    List<Task<List<string>>> tasks = new();
+                    List<Task<List<TracklistItem>>> tasks = new();
 
                     // gets all items in chunks of 100 tracks
                     for (int i = 0; i <= chunks; i++)
@@ -55,25 +55,34 @@ namespace spotify_cli_cs.Components
                         tasks.Add(Task.Run(async () =>
                         {
                             var res = await SpotifyCLI.spotify!.Playlists.GetItems(playlistID, req);
-                            List<string> chunkTrackNames = new();
+                            List<TracklistItem> chunkTracksData = new();
 
                             for (var j = 0; j < res!.Items!.Count; j++)
                             {
                                 FullTrack track = (FullTrack)res.Items[j].Track;
                                 //StaticUtilities.DBG(track.Name);
-                                chunkTrackNames.Add(track.Name);
+                                //chunkTrackNames.Add($"{track.Name} - {string.Join(", ", track.Artists.Select(artist => artist.Name))} on {track.Album.Name}");
+
+                                TracklistItem tracklistItem = new()
+                                {
+                                    name = track.Name,
+                                    album = track.Album.Name,
+                                    artists = string.Join(", ", track.Artists.Select(artist => artist.Name))
+                                };
+
+                                chunkTracksData.Add(tracklistItem);
                             }
 
-                            return chunkTrackNames;
+                            return chunkTracksData;
                         }));
                     }
 
                     Task.WaitAll(tasks.ToArray());
 
-                    // stitch tracks together in order
+                    // stitch data of all tracks together in order
                     for (int i = 0; i < tasks.Count; i++) 
                     {
-                        SpotifyCLI.tracklistListView.trackNames.AddRange(tasks[i].Result);
+                        SpotifyCLI.tracklistListView.tracklistData.AddRange(tasks[i].Result);
                     }
 
                     Thread.Sleep(100);

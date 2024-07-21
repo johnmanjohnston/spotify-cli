@@ -4,7 +4,6 @@
     {
         public string? name;
         public string? album;
-        public string? plays;
-        public string? duration;
+        public string? artists;
     }
 }
