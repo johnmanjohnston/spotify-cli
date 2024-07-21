@@ -24,6 +24,7 @@ namespace spotify_cli_cs.Components
             UpdateLabel();
         }
 
+        // TODO: optimize
         public override void UpdateLabel()
         {
             for (int i = 0 - (entriesToDisplay / 2); i < entriesToDisplay; i++) 
@@ -35,12 +36,12 @@ namespace spotify_cli_cs.Components
 
                 if (i == 0)
                 {
-                    Console.Write(SpotifyCLI.ANSI_GRAY + val + SpotifyCLI.ANSI_RESET);
+                    Console.Write(SpotifyCLI.ANSI_GRAY + $"({1 + (CustomModulus(currentScrollValue + i, trackNames.Count))}) " + val + SpotifyCLI.ANSI_RESET);
                 }
 
                 else 
                 {
-                    Console.Write($"{(CustomModulus(currentScrollValue + i, trackNames.Count))}" + val);
+                    Console.Write(val);
                 }
             }
         }
