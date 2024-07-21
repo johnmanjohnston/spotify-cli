@@ -33,6 +33,12 @@ public abstract class BaseScrollView : TUIBaseComponent
         }
     }
 
+    /// <summary>
+    /// Handles input for basic scrolling functionality. Lets you scroll up and down using arrow keys,
+    /// and page up/down keys. UpdateLabel() is NOT called from this function, however for the page
+    /// up/down scrolling functionality, it triggers UpdateLabel()
+    /// </summary>
+    /// <param name="key"></param>
     public override void HandleKeyInput(ConsoleKey key) 
     {
         if (key == ConsoleKey.DownArrow)

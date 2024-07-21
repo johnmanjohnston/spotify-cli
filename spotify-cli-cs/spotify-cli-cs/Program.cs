@@ -548,7 +548,7 @@ HandlePendingComponentInput();
         nextSongLabel = null; // to redraw
 
         // Take care of rerendering tabs
-        userLibListView!.entiresToDisplay = (Console.WindowHeight / 2) - 4;
+        userLibListView!.entriesToDisplay = (Console.WindowHeight / 2) - 4;
         DrawTabContent(redraw: true);
     }
 
