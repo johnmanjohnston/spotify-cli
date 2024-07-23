@@ -63,7 +63,7 @@ namespace spotify_cli_cs
 
             Thread.Sleep(500);
 
-            var searchInput = SpotifyCLI.driver.FindElement(By.XPath("//input[@data-testid='search-input']"));
+            var searchInput = SpotifyCLI.driver!.FindElement(By.XPath("//input[@data-testid='search-input']"));
             searchInput.Click();
             searchInput.SendKeys(uri);
             searchInput.Submit();

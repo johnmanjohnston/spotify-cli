@@ -15,7 +15,7 @@ class SpotifyCLI
 {
     // shared
     public static SpotifyClient? spotify;
-    public static EdgeDriver driver;
+    public static EdgeDriver? driver = null;
 
     // other
     private static string SHELL_EXECUTABLE = "powershell.exe";
@@ -93,6 +93,7 @@ class SpotifyCLI
 
     private static void Main()
     {
+        Console.Clear();
         DisplaySplashScreen();
         DisplaySplashScreenLoadingMessage("Loading");
 
@@ -155,7 +156,7 @@ class SpotifyCLI
 
             DisplaySplashScreenLoadingMessage("Opening Spotify");
             // initialization is complete; open Spotify
-            driver.Navigate().GoToUrl("https://open.spotify.com");
+            driver!.Navigate().GoToUrl("https://open.spotify.com");
             Thread.Sleep(4000);
         }
 
@@ -214,7 +215,7 @@ class SpotifyCLI
             // this functionality is more important, so ignore any
             // instructions to block the orginal functionality
             if (keyData.Key == ConsoleKey.Escape)
-            {
+            {   
                 // Exit and clean up
                 if (!FRONTEND_ONLY) { driver!.Close(); }
 
@@ -743,7 +744,7 @@ HandlePendingComponentInput();
         tabState = Tab.Tracklist;
         PENDING_UPDATE_TAB_CONTENT = true;
 
-        components.Remove(userLibListView);
+        components.Remove(userLibListView!);
         FOCUSED = tracklistListView;
 
 

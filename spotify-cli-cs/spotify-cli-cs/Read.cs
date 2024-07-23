@@ -247,10 +247,10 @@ namespace spotify_cli_cs
         {
             string retval = "";
 
-            var playlist = SpotifyCLI.spotify.Playlists.Get(uri.Split(":")[2]);
-            retval = playlist.Result.Id;
+            var playlist = SpotifyCLI.spotify!.Playlists.Get(uri.Split(":")[2]);
+            retval = playlist.Result!.Id!;
 
-            return retval;
+            return retval!;
         }
 
         // TODO: see if you can optimize this function
