@@ -2,14 +2,12 @@
 using spotify_cli_cs.Components;
 using spotify_cli_cs.Components.Core;
 using spotify_cli_cs.Utility;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Edge;
-using SpotifyAPI.Web;
 using spotify_cli_cs.Models;
 
-// Initialize 
-// ChromeDriver driver = new();
-// driver.Navigate().GoToUrl("https://example.com");
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
+
+using SpotifyAPI.Web;
 
 class SpotifyCLI
 {

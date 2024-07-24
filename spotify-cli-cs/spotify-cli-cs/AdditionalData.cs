@@ -3,6 +3,9 @@
     public static class AdditionalData 
     {
         /*
+         * "key-value" like data structure to validate
+         * data. also we use hexadecimal because
+         * hex looks really fuckin cool 
         */
         public enum DataMap
         {

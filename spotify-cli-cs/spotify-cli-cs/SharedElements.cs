@@ -58,24 +58,15 @@ namespace spotify_cli_cs
         public static IWebElement GetTracklist() => driver!.FindElement(By.XPath("//div[@data-testid='track-list']"));
         public static IWebElement CurrentContextTracklist() => GetPlaylistTrackList() ?? GetTracklist();
 
+        /*
         public static List<IWebElement> CurrentTracklistSongChunk() 
         {
-            // TO DO: REMOVE THE NEDDLESS CONVERSION OF LIST -> ARRAY -> LIST
-
-            // int maxElementsInChunk = 99; // TO DO: change this depending on window dimensions
-
-            /*
-            return CurrentContextTracklist()
-            .FindElements(By.XPath(".//div[@data-testid='tracklist-row']"))
-           // .Take(maxElementsInChunk)
-            .ToList();
-            */
-
             Thread.Sleep(1500);
 
             StaticUtilities.DBG(driver!.FindElements(By.XPath("//div[@data-testid='tracklist-row']")).Count.ToString());
 
             return driver!.FindElements(By.XPath("//div[@data-testid='tracklist-row']")).ToList();
         }
+        */
     }
 }
