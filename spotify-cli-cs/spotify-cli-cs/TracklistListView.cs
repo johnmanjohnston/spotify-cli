@@ -1,4 +1,5 @@
-﻿using spotify_cli_cs.Components.Core;
+﻿using OpenQA.Selenium;
+using spotify_cli_cs.Components.Core;
 using spotify_cli_cs.Models;
 using spotify_cli_cs.Utility;
 
@@ -25,6 +26,10 @@ namespace spotify_cli_cs.Components
         {
             base.HandleKeyInput(key);
             UpdateLabel();
+
+            IJavaScriptExecutor jse = SpotifyCLI.driver!;
+            Thread.Sleep(100);
+            jse.ExecuteScript("arguments[0].scrollBy(0, 200);", SharedElements.GetTracklistScrollView());
         }
 
         // TODO: optimize
@@ -45,7 +50,7 @@ namespace spotify_cli_cs.Components
 
                 if (i == 0)
                 {
-                    Console.Write($"{1 + trackIndex}\t{name} by {artists} on {album}");
+                    Console.Write($"{1 + trackIndex}\t{name} by {artists} on {album}"); 
                 }
 
                 else 

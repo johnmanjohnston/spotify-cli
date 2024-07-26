@@ -57,6 +57,7 @@ namespace spotify_cli_cs
         public static IWebElement GetPlaylistTrackList() => driver!.FindElement(By.XPath("//div[@data-testid='playlist-tracklist']"));
         public static IWebElement GetTracklist() => driver!.FindElement(By.XPath("//div[@data-testid='track-list']"));
         public static IWebElement CurrentContextTracklist() => GetPlaylistTrackList() ?? GetTracklist();
+        public static IWebElement GetTracklistScrollView() => driver!.FindElement(By.XPath("(//div[@data-overlayscrollbars-viewport='scrollbarHidden overflowXHidden overflowYScroll'])[2]"));
 
         /*
         public static List<IWebElement> CurrentTracklistSongChunk() 
