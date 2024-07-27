@@ -2,6 +2,7 @@
 using spotify_cli_cs.Components.Core;
 using spotify_cli_cs.Models;
 using spotify_cli_cs.Utility;
+using System;
 
 namespace spotify_cli_cs.Components
 {
@@ -12,7 +13,12 @@ namespace spotify_cli_cs.Components
 
         public List<TracklistItem> tracklistData = new();
 
-        public TracklistListView(int x = 0, int y = 0) : base(x, y) { }
+        IJavaScriptExecutor? jse = null;
+
+        public TracklistListView(int x = 0, int y = 0) : base(x, y) 
+        {
+            jse = SpotifyCLI.driver;
+        }
 
         public override void OnBlur()
         {
@@ -27,9 +33,15 @@ namespace spotify_cli_cs.Components
             base.HandleKeyInput(key);
             UpdateLabel();
 
-            IJavaScriptExecutor jse = SpotifyCLI.driver!;
-            Thread.Sleep(100);
-            jse.ExecuteScript("arguments[0].scrollBy(0, 200);", SharedElements.GetTracklistScrollView());
+
+            double documentHeight = (double)Convert.ToInt64(jse!.ExecuteScript("return arguments[0].scrollHeight", SharedElements.GetTracklistScrollView()));
+            double normalizedTargetScrollValue = (double)this.currentScrollValue / (double)this.tracklistData.Count;
+            double targetScrollValue = normalizedTargetScrollValue * documentHeight;
+
+            StaticUtilities.DBG($"height: {documentHeight}; evaluated noramlizedVal: {currentScrollValue / tracklistData.Count}; target: {targetScrollValue}");
+            StaticUtilities.DBG($"cur scroll val: {currentScrollValue}; tracklist data count {tracklistData.Count}");
+
+            jse!.ExecuteScript($"arguments[0].scrollTo(0, {targetScrollValue});", SharedElements.GetTracklistScrollView());
         }
 
         // TODO: optimize
